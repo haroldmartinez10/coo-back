@@ -1,7 +1,7 @@
 import { LoginUserDTO } from "@application/dtos/user.dto";
 import { IUserRepository } from "@application/interfaces/user-repository.interface";
 import { User } from "@domain/entities/User";
-import * as bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 
 export class LoginUserUseCase {
   constructor(private userRepository: IUserRepository) {}

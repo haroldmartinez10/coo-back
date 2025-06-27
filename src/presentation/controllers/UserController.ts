@@ -2,8 +2,7 @@ import { LoginUserDTO, RegisterUserDTO } from "@application/dtos/user.dto";
 import { LoginUserUseCase } from "@application/use-cases/login-user.usecase";
 import { RegisterUserUseCase } from "@application/use-cases/register-user.usecase";
 import { UserRepository } from "@infrastructure/repositories/UserRepository";
-import { FastifyReply } from "fastify";
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 export const loginUserHandler = async (
   request: FastifyRequest,
