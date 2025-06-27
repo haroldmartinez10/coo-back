@@ -1,6 +1,9 @@
+import "dotenv/config";
 import createServer from "@infrastructure/server";
+import checkDatabaseService from "@application/services/CheckDataBaseService";
 
 async function startServer() {
+  await checkDatabaseService();
   const app = await createServer();
 
   const PORT = process.env.PORT || 3000;
