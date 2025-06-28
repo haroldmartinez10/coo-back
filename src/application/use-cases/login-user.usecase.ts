@@ -1,12 +1,21 @@
 import { LoginUserDTO } from "@application/dtos/user.dto";
 import { IUserRepository } from "@application/interfaces/user-repository.interface";
 import { User } from "@domain/entities/User";
+import { JwtService } from "@application/services/JwtService";
 import bcrypt from "bcrypt";
 
-export class LoginUserUseCase {
-  constructor(private userRepository: IUserRepository) {}
+export interface LoginResult {
+  user: User;
+  token: string;
+}
 
-  async execute(data: LoginUserDTO): Promise<User> {
+export class LoginUserUseCase {
+  constructor(
+    private userRepository: IUserRepository,
+    private jwtService: JwtService
+  ) {}
+
+  async execute(data: LoginUserDTO): Promise<LoginResult> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
       throw new Error("User not found");
@@ -16,6 +25,15 @@ export class LoginUserUseCase {
       throw new Error("Invalid password");
     }
 
-    return user;
+    const token = this.jwtService.generateToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+    });
+
+    return {
+      user,
+      token,
+    };
   }
 }

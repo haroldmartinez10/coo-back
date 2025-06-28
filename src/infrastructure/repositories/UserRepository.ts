@@ -1,12 +1,52 @@
 import { IUserRepository } from "@application/interfaces/user-repository.interface";
 import { User } from "@domain/entities/User";
+import pool from "@infrastructure/database/connection";
 
 export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null> {
-    return null;
+    try {
+      const [rows] = await pool.execute(
+        "SELECT id, email, password_hash, name FROM users WHERE email = ?",
+        [email]
+      );
+
+      const users = rows as any[];
+      if (users.length === 0) {
+        return null;
+      }
+
+      const userData = users[0];
+      return new User(
+        userData.id,
+        userData.email,
+        userData.password_hash,
+        userData.name
+      );
+    } catch (error) {
+      console.error("Error finding user by email:", error);
+      throw new Error("Database error while finding user");
+    }
   }
 
   async save(user: User): Promise<User> {
-    return user;
+    try {
+      const [result] = await pool.execute(
+        "INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)",
+        [user.email, user.password, user.name]
+      );
+
+      const insertResult = result as { insertId: number };
+      const savedUser = new User(
+        insertResult.insertId,
+        user.email,
+        user.password,
+        user.name
+      );
+
+      return savedUser;
+    } catch (error) {
+      console.error("Error saving user:", error);
+      throw new Error("Database error while saving user");
+    }
   }
 }
