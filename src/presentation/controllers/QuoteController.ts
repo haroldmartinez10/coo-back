@@ -1,4 +1,5 @@
 import { QuoteOrderUseCase } from "@application/use-cases/quote-order.use-case";
+import { GetQuoteHistoryUseCase } from "@application/use-cases/get-quote-history.usecase";
 import { RateRepositoryImpl } from "@infrastructure/repositories/RateRepository";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { validateQuoteRequest } from "../validators/quoteValidator";
@@ -20,8 +21,12 @@ export const quoteOrderHandler = async (
     const rateRepository = new RateRepositoryImpl();
     const quoteUseCase = new QuoteOrderUseCase(rateRepository);
 
+    // Obtener userId del token JWT (viene del middleware de autenticación)
+    const userId = (request as any).user.userId;
+
     const quoteCalculation = await quoteUseCase.execute(
-      validation.validatedData!
+      validation.validatedData!,
+      userId
     );
 
     reply.code(200).send({
@@ -64,6 +69,31 @@ export const quoteOrderHandler = async (
 
     reply.code(500).send({
       error: "Internal server error while calculating quote",
+    });
+  }
+};
+
+export const getQuoteHistoryHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const rateRepository = new RateRepositoryImpl();
+    const getHistoryUseCase = new GetQuoteHistoryUseCase(rateRepository);
+
+    // Obtener userId del token JWT (viene del middleware de autenticación)
+    const userId = (request as any).user.userId;
+
+    const quotes = await getHistoryUseCase.execute(userId);
+
+    reply.code(200).send({
+      message: "Quote history retrieved successfully",
+      quotes: quotes,
+    });
+  } catch (error) {
+    console.error("Error getting quote history:", error);
+    reply.code(500).send({
+      error: "Internal server error while retrieving quote history",
     });
   }
 };

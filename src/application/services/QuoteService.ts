@@ -1,4 +1,5 @@
 import { QuoteOrderDTO } from "@application/dtos/quote-order-dto";
+import { CreateQuoteHistoryDTO } from "@application/dtos/quote-history.dto";
 import { RateRepository } from "@application/interfaces/quote-repository.interface";
 
 export interface QuoteCalculation {
@@ -20,24 +21,14 @@ export interface QuoteCalculation {
 export class QuoteService {
   constructor(private rateRepository: RateRepository) {}
 
-  /**
-   * Calcula el peso volumen según la fórmula: (alto * ancho * largo) / 2500
-   * Redondea hacia arriba al valor entero superior
-   */
   calculateVolumeWeight(height: number, width: number, length: number): number {
     return Math.ceil((height * width * length) / 2500);
   }
 
-  /**
-   *Este Determina el peso a usar para cotización, es decir mayor entre peso físico y volumen
-   */
   calculateSelectedWeight(actualWeight: number, volumeWeight: number): number {
     return Math.max(actualWeight, volumeWeight);
   }
 
-  /**
-   * Valida que las ciudades estén soportadas en el sistema
-   */
   validateSupportedCities(originCity: string, destinationCity: string): void {
     const supportedCities = ["Bogotá", "Medellín", "Cali", "Barranquilla"];
 
@@ -58,14 +49,9 @@ export class QuoteService {
     }
   }
 
-  /**
-   * Realiza la cotización completa del envío
-   */
   async calculateQuote(dto: QuoteOrderDTO): Promise<QuoteCalculation> {
-    // Validar ciudades soportadas
     this.validateSupportedCities(dto.originCity, dto.destinationCity);
 
-    // Calcular pesos
     const volumeWeight = this.calculateVolumeWeight(
       dto.height,
       dto.width,
@@ -76,7 +62,6 @@ export class QuoteService {
       volumeWeight
     );
 
-    // Obtener tarifa de la base de datos
     const rateData = await this.rateRepository.findRateDetails(
       dto.originCity,
       dto.destinationCity,
@@ -89,7 +74,6 @@ export class QuoteService {
       );
     }
 
-    // Calcular precio total
     const totalPrice =
       rateData.basePrice + selectedWeight * rateData.pricePerKg;
 
@@ -108,6 +92,32 @@ export class QuoteService {
         length: dto.length,
       },
     };
+  }
+
+  async calculateAndSaveQuote(
+    dto: QuoteOrderDTO,
+    userId: number
+  ): Promise<QuoteCalculation> {
+    const quoteCalculation = await this.calculateQuote(dto);
+
+    const historyData: CreateQuoteHistoryDTO = {
+      userId,
+      originCity: quoteCalculation.originCity,
+      destinationCity: quoteCalculation.destinationCity,
+      actualWeight: quoteCalculation.actualWeight,
+      volumeWeight: quoteCalculation.volumeWeight,
+      selectedWeight: quoteCalculation.selectedWeight,
+      height: quoteCalculation.dimensions.height,
+      width: quoteCalculation.dimensions.width,
+      length: quoteCalculation.dimensions.length,
+      basePrice: quoteCalculation.basePrice,
+      pricePerKg: quoteCalculation.pricePerKg,
+      totalPrice: quoteCalculation.totalPrice,
+    };
+
+    await this.rateRepository.saveQuoteHistory(historyData);
+
+    return quoteCalculation;
   }
 
   getSupportedCities(): string[] {
