@@ -13,6 +13,33 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     "/orders",
     {
       preHandler: authMiddleware,
+      schema: {
+        tags: ["Orders"],
+        summary: "Crear nueva orden de envío",
+        description: "Crea una nueva orden de envío",
+        security: [{ Bearer: [] }],
+        body: {
+          type: "object",
+          required: [
+            "originCity",
+            "destinationCity",
+            "weight",
+            "height",
+            "width",
+            "length",
+            "totalPrice",
+          ],
+          properties: {
+            originCity: { type: "string" },
+            destinationCity: { type: "string" },
+            weight: { type: "number" },
+            height: { type: "number" },
+            width: { type: "number" },
+            length: { type: "number" },
+            totalPrice: { type: "number" },
+          },
+        },
+      },
     },
     createOrderHandler
   );
@@ -21,6 +48,12 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     "/orders",
     {
       preHandler: authMiddleware,
+      schema: {
+        tags: ["Orders"],
+        summary: "Obtener órdenes del usuario",
+        description: "Obtiene todas las órdenes del usuario",
+        security: [{ Bearer: [] }],
+      },
     },
     getUserOrdersHandler
   );
@@ -30,6 +63,18 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     "/orders/:id/tracking",
     {
       preHandler: authMiddleware,
+      schema: {
+        tags: ["Orders"],
+        summary: "Obtener seguimiento de orden",
+        description: "Obtiene el seguimiento completo de una orden",
+        security: [{ Bearer: [] }],
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+          },
+        },
+      },
     },
     getOrderTrackingHandler
   );
@@ -39,6 +84,29 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     "/orders/:id/status",
     {
       preHandler: authMiddleware,
+      schema: {
+        tags: ["Orders"],
+        summary: "Actualizar estado de orden",
+        description: "Actualiza el estado de una orden",
+        security: [{ Bearer: [] }],
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+          },
+        },
+        body: {
+          type: "object",
+          required: ["newStatus"],
+          properties: {
+            newStatus: {
+              type: "string",
+              enum: ["En espera", "En tránsito", "Entregado"],
+            },
+            notes: { type: "string" },
+          },
+        },
+      },
     },
     updateOrderStatusHandler
   );
@@ -48,6 +116,18 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     "/orders/:id/status-history",
     {
       preHandler: authMiddleware,
+      schema: {
+        tags: ["Orders"],
+        summary: "Obtener historial de estados",
+        description: "Obtiene el historial de estados de una orden",
+        security: [{ Bearer: [] }],
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+          },
+        },
+      },
     },
     getOrderStatusHistoryHandler
   );

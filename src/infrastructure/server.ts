@@ -1,5 +1,8 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
+import { swaggerOptions, swaggerUiOptions } from "./config/swagger";
 
 const createServer = async () => {
   const app = Fastify({
@@ -9,6 +12,10 @@ const createServer = async () => {
   await app.register(cors, {
     origin: "*",
   });
+
+  // Register Swagger
+  await app.register(swagger, swaggerOptions);
+  await app.register(swaggerUi, swaggerUiOptions);
 
   return app;
 };

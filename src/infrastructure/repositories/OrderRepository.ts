@@ -96,7 +96,6 @@ export class OrderRepositoryImpl implements OrderRepository {
       FROM shipping_orders 
       WHERE id = ?
     `;
-
     const [orderRows] = await pool.execute(orderQuery, [id]);
     const orders = this.mapRowsToOrders(orderRows as any[]);
 
