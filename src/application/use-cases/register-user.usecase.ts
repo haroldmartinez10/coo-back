@@ -8,7 +8,7 @@ export class RegisterUserUseCase {
 
   async execute(data: RegisterUserDTO): Promise<User> {
     const existing = await this.userRepository.findByEmail(data.email);
-    if (existing) throw new Error("Email already registered");
+    if (existing) throw new Error("Correo electrónico ya registrado");
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const newUser = new User(Date.now(), data.email, hashedPassword, data.name);

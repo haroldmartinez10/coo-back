@@ -16,12 +16,11 @@ export const loginUserHandler = async (
     const result = await useCase.execute(request.body as LoginUserDTO);
     reply.code(200).send({
       message: "User logged in successfully",
+      token: result.token,
       user: {
-        id: result.user.id,
         email: result.user.email,
         name: result.user.name,
       },
-      token: result.token,
     });
   } catch (err) {
     reply.code(400).send({ error: (err as Error).message });
