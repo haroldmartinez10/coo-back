@@ -8,7 +8,7 @@ export interface RateDetails {
   pricePerKg: number;
 }
 
-export interface RateRepository {
+export interface QuoteRepository {
   findRate(
     origin: string,
     destination: string,

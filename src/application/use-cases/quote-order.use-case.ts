@@ -1,5 +1,5 @@
 import { QuoteOrderDTO } from "@application/dtos/quote-order-dto";
-import { RateRepository } from "@application/interfaces/quote-repository.interface";
+import { QuoteRepository } from "@application/interfaces/quote-repository.interface";
 import {
   QuoteService,
   QuoteCalculation,
@@ -8,8 +8,8 @@ import {
 export class QuoteOrderUseCase {
   private quoteService: QuoteService;
 
-  constructor(private rateRepo: RateRepository) {
-    this.quoteService = new QuoteService(rateRepo);
+  constructor(private quoteRepo: QuoteRepository) {
+    this.quoteService = new QuoteService(quoteRepo);
   }
 
   async execute(dto: QuoteOrderDTO, userId: number): Promise<QuoteCalculation> {

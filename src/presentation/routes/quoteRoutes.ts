@@ -6,7 +6,6 @@ import {
 import { authMiddleware } from "../middleware/authMiddleware";
 
 export default async function quoteRoutes(fastify: FastifyInstance) {
-  // POST /quotes - Calculate shipping quote (requires authentication)
   fastify.post(
     "/quotes",
     {
@@ -15,7 +14,6 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
     quoteOrderHandler
   );
 
-  // GET /quotes - Get user's quote history (requires authentication)
   fastify.get(
     "/quotes",
     {

@@ -1,5 +1,5 @@
 import {
-  RateRepository,
+  QuoteRepository,
   RateDetails,
 } from "@application/interfaces/quote-repository.interface";
 import {
@@ -8,7 +8,7 @@ import {
 } from "@application/dtos/quote-history.dto";
 import pool from "@infrastructure/database/connection";
 
-export class RateRepositoryImpl implements RateRepository {
+export class QuoteRepositoryImpl implements QuoteRepository {
   async findRate(
     origin: string,
     destination: string,
@@ -104,7 +104,6 @@ export class RateRepositoryImpl implements RateRepository {
       const insertResult = result as any;
       const insertId = insertResult.insertId;
 
-      // Obtener el registro recién creado
       const [rows] = await pool.execute(
         `SELECT * FROM quote_history WHERE id = ?`,
         [insertId]

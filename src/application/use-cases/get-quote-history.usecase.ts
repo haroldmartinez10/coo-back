@@ -1,10 +1,10 @@
 import { QuoteHistoryDTO } from "@application/dtos/quote-history.dto";
-import { RateRepository } from "@application/interfaces/quote-repository.interface";
+import { QuoteRepository } from "@application/interfaces/quote-repository.interface";
 
 export class GetQuoteHistoryUseCase {
-  constructor(private rateRepository: RateRepository) {}
+  constructor(private quoteRepository: QuoteRepository) {}
 
   async execute(userId: number): Promise<QuoteHistoryDTO[]> {
-    return await this.rateRepository.getQuoteHistory(userId);
+    return await this.quoteRepository.getQuoteHistory(userId);
   }
 }

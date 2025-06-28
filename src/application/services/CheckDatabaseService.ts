@@ -24,13 +24,10 @@ const runMigrations = async () => {
       "migrations"
     );
 
-    // Run all migrations in order (structure first, then data)
     const files = fs
       .readdirSync(migrationsPath)
       .filter((file) => file.endsWith(".sql"))
-      .sort(); // Sort alphabetically to ensure consistent order
-
-    console.log("Running database migrations:", files);
+      .sort();
 
     for (const file of files) {
       const filePath = path.join(migrationsPath, file);

@@ -19,7 +19,6 @@ export const validateQuoteRequest = (
 } => {
   const errors: ValidationError[] = [];
 
-  // Validate origin city
   if (
     !data.originCity ||
     typeof data.originCity !== "string" ||
@@ -36,7 +35,6 @@ export const validateQuoteRequest = (
     });
   }
 
-  // Validate destination city
   if (
     !data.destinationCity ||
     typeof data.destinationCity !== "string" ||
@@ -55,7 +53,6 @@ export const validateQuoteRequest = (
     });
   }
 
-  // Validate weight
   if (!data.weight || typeof data.weight !== "number" || data.weight <= 0) {
     errors.push({
       field: "weight",
@@ -68,7 +65,6 @@ export const validateQuoteRequest = (
     });
   }
 
-  // Validate height
   if (!data.height || typeof data.height !== "number" || data.height <= 0) {
     errors.push({
       field: "height",
@@ -81,7 +77,6 @@ export const validateQuoteRequest = (
     });
   }
 
-  // Validate width
   if (!data.width || typeof data.width !== "number" || data.width <= 0) {
     errors.push({
       field: "width",
@@ -94,7 +89,6 @@ export const validateQuoteRequest = (
     });
   }
 
-  // Validate length
   if (!data.length || typeof data.length !== "number" || data.length <= 0) {
     errors.push({
       field: "length",
@@ -107,7 +101,6 @@ export const validateQuoteRequest = (
     });
   }
 
-  // Check for same origin and destination
   if (
     data.originCity &&
     data.destinationCity &&

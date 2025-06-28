@@ -1,6 +1,6 @@
 import { QuoteOrderUseCase } from "@application/use-cases/quote-order.use-case";
 import { GetQuoteHistoryUseCase } from "@application/use-cases/get-quote-history.usecase";
-import { RateRepositoryImpl } from "@infrastructure/repositories/RateRepository";
+import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { validateQuoteRequest } from "../validators/quoteValidator";
 
@@ -18,10 +18,10 @@ export const quoteOrderHandler = async (
       });
     }
 
-    const rateRepository = new RateRepositoryImpl();
-    const quoteUseCase = new QuoteOrderUseCase(rateRepository);
+    const quoteRepository = new QuoteRepositoryImpl();
 
-    // Obtener userId del token JWT (viene del middleware de autenticación)
+    const quoteUseCase = new QuoteOrderUseCase(quoteRepository);
+
     const userId = (request as any).user.userId;
 
     const quoteCalculation = await quoteUseCase.execute(
@@ -45,7 +45,6 @@ export const quoteOrderHandler = async (
           pricePerKg: quoteCalculation.pricePerKg,
           totalPrice: quoteCalculation.totalPrice,
         },
-        currency: "COP",
       },
     });
   } catch (error) {
@@ -78,10 +77,9 @@ export const getQuoteHistoryHandler = async (
   reply: FastifyReply
 ) => {
   try {
-    const rateRepository = new RateRepositoryImpl();
-    const getHistoryUseCase = new GetQuoteHistoryUseCase(rateRepository);
+    const quoteRepository = new QuoteRepositoryImpl();
+    const getHistoryUseCase = new GetQuoteHistoryUseCase(quoteRepository);
 
-    // Obtener userId del token JWT (viene del middleware de autenticación)
     const userId = (request as any).user.userId;
 
     const quotes = await getHistoryUseCase.execute(userId);

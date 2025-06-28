@@ -1,6 +1,6 @@
 import { QuoteOrderDTO } from "@application/dtos/quote-order-dto";
 import { CreateQuoteHistoryDTO } from "@application/dtos/quote-history.dto";
-import { RateRepository } from "@application/interfaces/quote-repository.interface";
+import { QuoteRepository } from "@application/interfaces/quote-repository.interface";
 
 export interface QuoteCalculation {
   actualWeight: number;
@@ -19,7 +19,7 @@ export interface QuoteCalculation {
 }
 
 export class QuoteService {
-  constructor(private rateRepository: RateRepository) {}
+  constructor(private quoteRepository: QuoteRepository) {}
 
   calculateVolumeWeight(height: number, width: number, length: number): number {
     return Math.ceil((height * width * length) / 2500);
@@ -62,7 +62,7 @@ export class QuoteService {
       volumeWeight
     );
 
-    const rateData = await this.rateRepository.findRateDetails(
+    const rateData = await this.quoteRepository.findRateDetails(
       dto.originCity,
       dto.destinationCity,
       selectedWeight
@@ -115,7 +115,7 @@ export class QuoteService {
       totalPrice: quoteCalculation.totalPrice,
     };
 
-    await this.rateRepository.saveQuoteHistory(historyData);
+    await this.quoteRepository.saveQuoteHistory(historyData);
 
     return quoteCalculation;
   }
