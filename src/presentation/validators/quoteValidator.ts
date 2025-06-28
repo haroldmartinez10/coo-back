@@ -5,6 +5,11 @@ export interface ValidationError {
   message: string;
 }
 
+const SUPPORTED_CITIES = ["Bogotá", "Medellín", "Cali", "Barranquilla"];
+const MAX_WEIGHT = 1000; // kg
+const MIN_DIMENSION = 1; // cm
+const MAX_DIMENSION = 300; // cm
+
 export const validateQuoteRequest = (
   data: any
 ): {
@@ -24,6 +29,11 @@ export const validateQuoteRequest = (
       field: "originCity",
       message: "Origin city is required and must be a valid string",
     });
+  } else if (!SUPPORTED_CITIES.includes(data.originCity.trim())) {
+    errors.push({
+      field: "originCity",
+      message: `Origin city must be one of: ${SUPPORTED_CITIES.join(", ")}`,
+    });
   }
 
   // Validate destination city
@@ -36,6 +46,13 @@ export const validateQuoteRequest = (
       field: "destinationCity",
       message: "Destination city is required and must be a valid string",
     });
+  } else if (!SUPPORTED_CITIES.includes(data.destinationCity.trim())) {
+    errors.push({
+      field: "destinationCity",
+      message: `Destination city must be one of: ${SUPPORTED_CITIES.join(
+        ", "
+      )}`,
+    });
   }
 
   // Validate weight
@@ -43,6 +60,11 @@ export const validateQuoteRequest = (
     errors.push({
       field: "weight",
       message: "Weight is required and must be a positive number",
+    });
+  } else if (data.weight > MAX_WEIGHT) {
+    errors.push({
+      field: "weight",
+      message: `Weight cannot exceed ${MAX_WEIGHT} kg`,
     });
   }
 
@@ -52,6 +74,11 @@ export const validateQuoteRequest = (
       field: "height",
       message: "Height is required and must be a positive number",
     });
+  } else if (data.height < MIN_DIMENSION || data.height > MAX_DIMENSION) {
+    errors.push({
+      field: "height",
+      message: `Height must be between ${MIN_DIMENSION} and ${MAX_DIMENSION} cm`,
+    });
   }
 
   // Validate width
@@ -60,6 +87,11 @@ export const validateQuoteRequest = (
       field: "width",
       message: "Width is required and must be a positive number",
     });
+  } else if (data.width < MIN_DIMENSION || data.width > MAX_DIMENSION) {
+    errors.push({
+      field: "width",
+      message: `Width must be between ${MIN_DIMENSION} and ${MAX_DIMENSION} cm`,
+    });
   }
 
   // Validate length
@@ -67,6 +99,11 @@ export const validateQuoteRequest = (
     errors.push({
       field: "length",
       message: "Length is required and must be a positive number",
+    });
+  } else if (data.length < MIN_DIMENSION || data.length > MAX_DIMENSION) {
+    errors.push({
+      field: "length",
+      message: `Length must be between ${MIN_DIMENSION} and ${MAX_DIMENSION} cm`,
     });
   }
 

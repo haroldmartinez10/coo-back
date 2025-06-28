@@ -3,9 +3,9 @@ import { quoteOrderHandler } from "../controllers/QuoteController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 export default async function quoteRoutes(fastify: FastifyInstance) {
-  // POST /quote - Calculate shipping quote (requires authentication)
+  // POST /quotes - Calculate shipping quote (requires authentication)
   fastify.post(
-    "/quote",
+    "/quotes",
     {
       preHandler: authMiddleware,
     },

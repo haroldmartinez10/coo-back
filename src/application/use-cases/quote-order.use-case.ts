@@ -1,24 +1,18 @@
 import { QuoteOrderDTO } from "@application/dtos/quote-order-dto";
 import { RateRepository } from "@application/interfaces/quote-repository.interface";
+import {
+  QuoteService,
+  QuoteCalculation,
+} from "@application/services/QuoteService";
 
 export class QuoteOrderUseCase {
-  constructor(private rateRepo: RateRepository) {}
+  private quoteService: QuoteService;
 
-  async execute(dto: QuoteOrderDTO): Promise<number> {
-    const volumeWeight = Math.ceil(
-      (dto.height * dto.width * dto.length) / 2500
-    );
-    const selectedWeight = Math.max(dto.weight, volumeWeight);
+  constructor(private rateRepo: RateRepository) {
+    this.quoteService = new QuoteService(rateRepo);
+  }
 
-    const rate = await this.rateRepo.findRate(
-      dto.originCity,
-      dto.destinationCity,
-      selectedWeight
-    );
-
-    if (!rate)
-      throw new Error("No rate found for the selected route and weight.");
-
-    return rate;
+  async execute(dto: QuoteOrderDTO): Promise<QuoteCalculation> {
+    return await this.quoteService.calculateQuote(dto);
   }
 }

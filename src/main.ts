@@ -10,7 +10,7 @@ async function startServer() {
   const app = await createServer();
 
   await app.register(userRoutes, { prefix: "/users" });
-  await app.register(quoteRoutes, { prefix: "/api" });
+  await app.register(quoteRoutes);
 
   const PORT = process.env.PORT || 3000;
 
