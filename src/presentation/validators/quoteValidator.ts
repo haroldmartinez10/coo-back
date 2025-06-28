@@ -6,9 +6,9 @@ export interface ValidationError {
 }
 
 const SUPPORTED_CITIES = ["Bogotá", "Medellín", "Cali", "Barranquilla"];
-const MAX_WEIGHT = 1000; // kg
-const MIN_DIMENSION = 1; // cm
-const MAX_DIMENSION = 300; // cm
+const MAX_WEIGHT = 1000;
+const MIN_DIMENSION = 1;
+const MAX_DIMENSION = 300;
 
 export const validateQuoteRequest = (
   data: any

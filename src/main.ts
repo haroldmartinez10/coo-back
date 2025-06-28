@@ -3,6 +3,7 @@ import createServer from "@infrastructure/server";
 import checkDatabaseService from "@application/services/CheckDatabaseService";
 import userRoutes from "presentation/routes/userRoutes";
 import quoteRoutes from "presentation/routes/quoteRoutes";
+import orderRoutes from "presentation/routes/orderRoutes";
 
 async function startServer() {
   await checkDatabaseService();
@@ -11,6 +12,7 @@ async function startServer() {
 
   await app.register(userRoutes, { prefix: "/users" });
   await app.register(quoteRoutes);
+  await app.register(orderRoutes);
 
   const PORT = process.env.PORT || 3000;
 
