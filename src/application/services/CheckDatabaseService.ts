@@ -23,16 +23,25 @@ const runMigrations = async () => {
       "database",
       "migrations"
     );
+
+    // Run all migrations in order (structure first, then data)
     const files = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith(".sql"));
+      .filter((file) => file.endsWith(".sql"))
+      .sort(); // Sort alphabetically to ensure consistent order
+
+    console.log("Running database migrations:", files);
 
     for (const file of files) {
       const filePath = path.join(migrationsPath, file);
       const sql = fs.readFileSync(filePath, "utf8");
 
+      console.log(`Executing migration: ${file}`);
       await pool.execute(sql);
+      console.log(`✅ Migration completed: ${file}`);
     }
+
+    console.log("✅ All migrations completed successfully");
   } catch (error) {
     console.error("❌ Error running migrations:", error);
     throw error;
