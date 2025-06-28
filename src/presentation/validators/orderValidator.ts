@@ -10,4 +10,25 @@ export const createOrderSchema = z.object({
   totalPrice: z.number().positive("El precio total debe ser mayor a 0"),
 });
 
+export const updateOrderStatusSchema = z.object({
+  newStatus: z.enum(["En espera", "En tránsito", "Entregado"], {
+    errorMap: () => ({
+      message: "Estado inválido. Debe ser: En espera, En tránsito o Entregado",
+    }),
+  }),
+  notes: z.string().optional(),
+});
+
+export const orderIdParamSchema = z.object({
+  id: z.string().transform((val) => {
+    const num = parseInt(val, 10);
+    if (isNaN(num) || num <= 0) {
+      throw new Error("ID de orden inválido");
+    }
+    return num;
+  }),
+});
+
 export type CreateOrderRequest = z.infer<typeof createOrderSchema>;
+export type UpdateOrderStatusRequest = z.infer<typeof updateOrderStatusSchema>;
+export type OrderIdParam = z.infer<typeof orderIdParamSchema>;

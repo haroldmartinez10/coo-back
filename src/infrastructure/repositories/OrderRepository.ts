@@ -1,6 +1,11 @@
 import { OrderRepository } from "@application/interfaces/order-repository.interface";
 import { CreateOrderDTO } from "@application/dtos/create-order.dto";
 import { OrderDTO } from "@application/dtos/order.dto";
+import {
+  OrderTrackingDto,
+  OrderStatusDto,
+  UpdateOrderStatusDto,
+} from "@application/dtos/order-status.dto";
 import pool from "@infrastructure/database/connection";
 
 export class OrderRepositoryImpl implements OrderRepository {
@@ -8,32 +13,52 @@ export class OrderRepositoryImpl implements OrderRepository {
     orderData: CreateOrderDTO,
     userId: number
   ): Promise<OrderDTO> {
-    const query = `
-      INSERT INTO shipping_orders 
-      (user_id, origin_city, destination_city, weight, height, width, length, total_price)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    const connection = await pool.getConnection();
 
-    const values = [
-      userId,
-      orderData.originCity,
-      orderData.destinationCity,
-      orderData.weight,
-      orderData.height,
-      orderData.width,
-      orderData.length,
-      orderData.totalPrice,
-    ];
+    try {
+      await connection.beginTransaction();
 
-    const [result] = await pool.execute(query, values);
-    const insertId = (result as any).insertId;
+      const query = `
+        INSERT INTO shipping_orders 
+        (user_id, origin_city, destination_city, weight, height, width, length, total_price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
 
-    const createdOrder = await this.findOrderById(insertId);
-    if (!createdOrder) {
-      throw new Error("Error creating order");
+      const values = [
+        userId,
+        orderData.originCity,
+        orderData.destinationCity,
+        orderData.weight,
+        orderData.height,
+        orderData.width,
+        orderData.length,
+        orderData.totalPrice,
+      ];
+
+      const [result] = await connection.execute(query, values);
+      const insertId = (result as any).insertId;
+
+      await this.addStatusToHistoryWithConnection(
+        connection,
+        insertId,
+        "En espera",
+        "Orden creada"
+      );
+
+      await connection.commit();
+
+      const createdOrder = await this.findOrderById(insertId);
+      if (!createdOrder) {
+        throw new Error("Error creating order");
+      }
+
+      return createdOrder;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
     }
-
-    return createdOrder;
   }
 
   async findOrdersByUserId(userId: number): Promise<OrderDTO[]> {
@@ -60,6 +85,109 @@ export class OrderRepositoryImpl implements OrderRepository {
     const [rows] = await pool.execute(query, [id]);
     const orders = this.mapRowsToOrders(rows as any[]);
     return orders.length > 0 ? orders[0] : null;
+  }
+
+  async findOrderWithTrackingById(
+    id: number
+  ): Promise<OrderTrackingDto | null> {
+    const orderQuery = `
+      SELECT id, user_id, origin_city, destination_city, weight, height, width, length, 
+             total_price, status, created_at, updated_at
+      FROM shipping_orders 
+      WHERE id = ?
+    `;
+
+    const [orderRows] = await pool.execute(orderQuery, [id]);
+    const orders = this.mapRowsToOrders(orderRows as any[]);
+
+    if (orders.length === 0) {
+      return null;
+    }
+
+    const order = orders[0];
+    const statusHistory = await this.getOrderStatusHistory(id);
+
+    return {
+      ...order,
+      statusHistory,
+    };
+  }
+
+  async updateOrderStatus(updateData: UpdateOrderStatusDto): Promise<void> {
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const updateQuery = `
+        UPDATE shipping_orders 
+        SET status = ?, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+      `;
+
+      await connection.execute(updateQuery, [
+        updateData.newStatus,
+        updateData.orderId,
+      ]);
+
+      await this.addStatusToHistoryWithConnection(
+        connection,
+        updateData.orderId,
+        updateData.newStatus,
+        updateData.notes
+      );
+
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async getOrderStatusHistory(orderId: number): Promise<OrderStatusDto[]> {
+    const query = `
+      SELECT id, order_id, status, changed_at, notes
+      FROM order_status_history 
+      WHERE order_id = ? 
+      ORDER BY changed_at ASC
+    `;
+
+    const [rows] = await pool.execute(query, [orderId]);
+    return (rows as any[]).map((row) => ({
+      id: row.id,
+      status: row.status,
+      changed_at: row.changed_at,
+      notes: row.notes,
+    }));
+  }
+
+  async addStatusToHistory(
+    orderId: number,
+    status: string,
+    notes?: string
+  ): Promise<void> {
+    const query = `
+      INSERT INTO order_status_history (order_id, status, notes)
+      VALUES (?, ?, ?)
+    `;
+
+    await pool.execute(query, [orderId, status, notes]);
+  }
+
+  private async addStatusToHistoryWithConnection(
+    connection: any,
+    orderId: number,
+    status: string,
+    notes?: string
+  ): Promise<void> {
+    const query = `
+      INSERT INTO order_status_history (order_id, status, notes)
+      VALUES (?, ?, ?)
+    `;
+
+    await connection.execute(query, [orderId, status, notes]);
   }
 
   private mapRowsToOrders(rows: any[]): OrderDTO[] {
