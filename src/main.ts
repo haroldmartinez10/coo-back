@@ -2,6 +2,7 @@ import "dotenv/config";
 import createServer from "@infrastructure/server";
 import checkDatabaseService from "@application/services/CheckDatabaseService";
 import userRoutes from "presentation/routes/userRoutes";
+import quoteRoutes from "presentation/routes/quoteRoutes";
 
 async function startServer() {
   await checkDatabaseService();
@@ -9,6 +10,7 @@ async function startServer() {
   const app = await createServer();
 
   await app.register(userRoutes, { prefix: "/users" });
+  await app.register(quoteRoutes, { prefix: "/api" });
 
   const PORT = process.env.PORT || 3000;
 
