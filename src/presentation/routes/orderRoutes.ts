@@ -6,7 +6,7 @@ import {
   updateOrderStatusHandler,
   getOrderStatusHistoryHandler,
 } from "../controllers/OrderController";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware";
 
 export default async function orderRoutes(fastify: FastifyInstance) {
   fastify.post(
@@ -81,11 +81,12 @@ export default async function orderRoutes(fastify: FastifyInstance) {
   fastify.put(
     "/orders/:id/status",
     {
-      preHandler: authMiddleware,
+      preHandler: adminMiddleware,
       schema: {
         tags: ["Orders"],
         summary: "Actualizar estado de orden",
-        description: "Actualiza el estado de una orden",
+        description:
+          "Actualiza el estado de una orden (Requiere permisos de administrador)",
         security: [{ Bearer: [] }],
         params: {
           type: "object",

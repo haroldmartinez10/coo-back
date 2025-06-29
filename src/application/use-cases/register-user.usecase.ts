@@ -11,7 +11,14 @@ export class RegisterUserUseCase {
     if (existing) throw new Error("Correo electrónico ya registrado");
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const newUser = new User(Date.now(), data.email, hashedPassword, data.name);
+
+    const newUser = new User(
+      Date.now(),
+      data.email,
+      hashedPassword,
+      data.name,
+      "user"
+    );
     return await this.userRepository.save(newUser);
   }
 }

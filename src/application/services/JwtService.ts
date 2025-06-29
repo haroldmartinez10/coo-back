@@ -14,6 +14,7 @@ export class JwtService {
     userId: number;
     email: string;
     name: string;
+    role: "admin" | "user";
   }): string {
     return jwt.sign(payload, this.secretKey, {
       expiresIn: this.expiresIn,

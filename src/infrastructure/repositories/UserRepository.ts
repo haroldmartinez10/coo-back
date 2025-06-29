@@ -6,7 +6,7 @@ export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null> {
     try {
       const [rows] = await pool.execute(
-        "SELECT id, email, password_hash, name FROM users WHERE email = ?",
+        "SELECT id, email, password_hash, name, role FROM users WHERE email = ?",
         [email]
       );
 
@@ -20,7 +20,8 @@ export class UserRepository implements IUserRepository {
         userData.id,
         userData.email,
         userData.password_hash,
-        userData.name
+        userData.name,
+        userData.role
       );
     } catch (error) {
       console.error("Error finding user by email:", error);
@@ -31,8 +32,8 @@ export class UserRepository implements IUserRepository {
   async save(user: User): Promise<User> {
     try {
       const [result] = await pool.execute(
-        "INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)",
-        [user.email, user.password, user.name]
+        "INSERT INTO users (email, password_hash, name, role) VALUES (?, ?, ?, ?)",
+        [user.email, user.password, user.name, user.role]
       );
 
       const insertResult = result as { insertId: number };
@@ -40,7 +41,8 @@ export class UserRepository implements IUserRepository {
         insertResult.insertId,
         user.email,
         user.password,
-        user.name
+        user.name,
+        user.role
       );
 
       return savedUser;
