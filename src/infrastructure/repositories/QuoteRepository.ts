@@ -33,9 +33,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       }
 
       const rate = rates[0];
-      const totalPrice = rate.base_price + weight * rate.price_per_kg;
-
-      return totalPrice;
+      return rate.base_price;
     } catch (error) {
       console.error("Error finding rate:", error);
       throw new Error("Database error while finding rate");
@@ -83,8 +81,8 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       const [result] = await pool.execute(
         `INSERT INTO quote_history 
          (user_id, origin_city, destination_city, actual_weight, volume_weight, 
-          selected_weight, height, width, length, base_price, price_per_kg, total_price)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          selected_weight, height, width, length, base_price, price_per_kg)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           quoteData.userId,
           quoteData.originCity,
@@ -97,7 +95,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
           quoteData.length,
           quoteData.basePrice,
           quoteData.pricePerKg,
-          quoteData.totalPrice,
         ]
       );
 
@@ -123,7 +120,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         length: savedQuote.length,
         basePrice: savedQuote.base_price,
         pricePerKg: savedQuote.price_per_kg,
-        totalPrice: savedQuote.total_price,
         createdAt: savedQuote.created_at,
       };
     } catch (error) {
@@ -155,7 +151,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         length: quote.length,
         basePrice: quote.base_price,
         pricePerKg: quote.price_per_kg,
-        totalPrice: quote.total_price,
         createdAt: quote.created_at,
       }));
     } catch (error) {

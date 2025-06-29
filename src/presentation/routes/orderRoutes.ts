@@ -27,7 +27,6 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             "height",
             "width",
             "length",
-            "totalPrice",
           ],
           properties: {
             originCity: { type: "string" },
@@ -36,7 +35,6 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             height: { type: "number" },
             width: { type: "number" },
             length: { type: "number" },
-            totalPrice: { type: "number" },
           },
         },
       },

@@ -8,7 +8,6 @@ export interface QuoteCalculation {
   selectedWeight: number;
   basePrice: number;
   pricePerKg: number;
-  totalPrice: number;
   originCity: string;
   destinationCity: string;
   dimensions: {
@@ -22,7 +21,7 @@ export class QuoteService {
   constructor(private quoteRepository: QuoteRepository) {}
 
   calculateVolumeWeight(height: number, width: number, length: number): number {
-    return Math.ceil((height * width * length) / 2500);
+    return (height * width * length) / 2500;
   }
 
   calculateSelectedWeight(actualWeight: number, volumeWeight: number): number {
@@ -74,16 +73,12 @@ export class QuoteService {
       );
     }
 
-    const totalPrice =
-      rateData.basePrice + selectedWeight * rateData.pricePerKg;
-
     return {
       actualWeight: dto.weight,
       volumeWeight,
       selectedWeight,
       basePrice: rateData.basePrice,
       pricePerKg: rateData.pricePerKg,
-      totalPrice,
       originCity: dto.originCity,
       destinationCity: dto.destinationCity,
       dimensions: {
@@ -112,7 +107,6 @@ export class QuoteService {
       length: quoteCalculation.dimensions.length,
       basePrice: quoteCalculation.basePrice,
       pricePerKg: quoteCalculation.pricePerKg,
-      totalPrice: quoteCalculation.totalPrice,
     };
 
     await this.quoteRepository.saveQuoteHistory(historyData);

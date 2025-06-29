@@ -7,7 +7,6 @@ export class Order {
   public height: number;
   public width: number;
   public length: number;
-  public totalPrice: number;
   public status: string;
   public createdAt?: Date;
   public updatedAt?: Date;
@@ -20,7 +19,6 @@ export class Order {
     height: number,
     width: number,
     length: number,
-    totalPrice: number,
     status: string = "pending"
   ) {
     this.userId = userId;
@@ -30,7 +28,6 @@ export class Order {
     this.height = height;
     this.width = width;
     this.length = length;
-    this.totalPrice = totalPrice;
     this.status = status;
   }
 }

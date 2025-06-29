@@ -26,10 +26,6 @@ export class OrderService {
       throw new Error("Las dimensiones deben ser mayores a 0");
     }
 
-    if (orderData.totalPrice <= 0) {
-      throw new Error("El precio total debe ser mayor a 0");
-    }
-
     if (!orderData.originCity || !orderData.destinationCity) {
       throw new Error("Debe especificar ciudad de origen y destino");
     }

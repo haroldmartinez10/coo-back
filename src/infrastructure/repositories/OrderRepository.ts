@@ -20,8 +20,8 @@ export class OrderRepositoryImpl implements OrderRepository {
 
       const query = `
         INSERT INTO shipping_orders 
-        (user_id, origin_city, destination_city, weight, height, width, length, total_price)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (user_id, origin_city, destination_city, weight, height, width, length)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
@@ -32,7 +32,6 @@ export class OrderRepositoryImpl implements OrderRepository {
         orderData.height,
         orderData.width,
         orderData.length,
-        orderData.totalPrice,
       ];
 
       const [result] = await connection.execute(query, values);
@@ -64,7 +63,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   async findOrdersByUserId(userId: number): Promise<OrderDTO[]> {
     const query = `
       SELECT id, user_id, origin_city, destination_city, weight, height, width, length, 
-             total_price, status, created_at, updated_at
+             status, created_at, updated_at
       FROM shipping_orders 
       WHERE user_id = ? 
       ORDER BY created_at DESC
@@ -77,7 +76,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   async findOrderById(id: number): Promise<OrderDTO | null> {
     const query = `
       SELECT id, user_id, origin_city, destination_city, weight, height, width, length, 
-             total_price, status, created_at, updated_at
+             status, created_at, updated_at
       FROM shipping_orders 
       WHERE id = ?
     `;
@@ -92,7 +91,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   ): Promise<OrderTrackingDto | null> {
     const orderQuery = `
       SELECT id, user_id, origin_city, destination_city, weight, height, width, length, 
-             total_price, status, created_at, updated_at
+             status, created_at, updated_at
       FROM shipping_orders 
       WHERE id = ?
     `;
@@ -199,7 +198,6 @@ export class OrderRepositoryImpl implements OrderRepository {
       height: parseFloat(row.height),
       width: parseFloat(row.width),
       length: parseFloat(row.length),
-      totalPrice: parseFloat(row.total_price),
       status: row.status,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

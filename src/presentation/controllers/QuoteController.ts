@@ -40,11 +40,8 @@ export const quoteOrderHandler = async (
           selectedWeight: quoteCalculation.selectedWeight,
           dimensions: quoteCalculation.dimensions,
         },
-        pricing: {
-          basePrice: quoteCalculation.basePrice,
-          pricePerKg: quoteCalculation.pricePerKg,
-          totalPrice: quoteCalculation.totalPrice,
-        },
+        price: quoteCalculation.basePrice,
+        currency: "COP",
       },
     });
   } catch (error) {

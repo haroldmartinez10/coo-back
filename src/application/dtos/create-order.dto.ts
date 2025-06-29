@@ -5,5 +5,4 @@ export interface CreateOrderDTO {
   height: number;
   width: number;
   length: number;
-  totalPrice: number;
 }

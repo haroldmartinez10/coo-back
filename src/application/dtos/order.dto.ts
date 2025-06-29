@@ -7,7 +7,6 @@ export interface OrderDTO {
   height: number;
   width: number;
   length: number;
-  totalPrice: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;
