@@ -14,7 +14,6 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
         tags: ["Quotes"],
         summary: "Calcular cotización de envío",
         description: "Calcula el precio y detalles de un envío",
-        security: [{ Bearer: [] }],
         body: {
           type: "object",
           required: [
@@ -44,8 +43,30 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
                 properties: {
                   originCity: { type: "string" },
                   destinationCity: { type: "string" },
-                  packageDetails: { type: "object" },
-                  pricing: { type: "object" },
+                  packageDetails: {
+                    type: "object",
+                    properties: {
+                      actualWeight: { type: "number" },
+                      volumeWeight: { type: "number" },
+                      selectedWeight: { type: "number" },
+                      dimensions: {
+                        type: "object",
+                        properties: {
+                          height: { type: "number" },
+                          width: { type: "number" },
+                          length: { type: "number" },
+                        },
+                      },
+                    },
+                  },
+                  pricing: {
+                    type: "object",
+                    properties: {
+                      basePrice: { type: "number" },
+                      pricePerKg: { type: "number" },
+                      totalPrice: { type: "number" },
+                    },
+                  },
                 },
               },
             },
@@ -64,7 +85,6 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
         tags: ["Quotes"],
         summary: "Obtener historial de cotizaciones",
         description: "Obtiene todas las cotizaciones del usuario",
-        security: [{ Bearer: [] }],
         response: {
           200: {
             type: "object",
@@ -80,7 +100,7 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
                     destinationCity: { type: "string" },
                     weight: { type: "number" },
                     totalPrice: { type: "number" },
-                    createdAt: { type: "string" },
+                    createdAt: { type: "string", format: "date-time" },
                   },
                 },
               },

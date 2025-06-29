@@ -2,6 +2,7 @@ export const swaggerOptions = {
   swagger: {
     info: {
       title: "COO API",
+      version: "1.0.0",
     },
     host:
       process.env.NODE_ENV === "production" ? "api.coo.com" : "localhost:3000",

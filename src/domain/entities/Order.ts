@@ -21,7 +21,7 @@ export class Order {
     width: number,
     length: number,
     totalPrice: number,
-    status: string = "En espera"
+    status: string = "pending"
   ) {
     this.userId = userId;
     this.originCity = originCity;

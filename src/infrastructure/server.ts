@@ -13,7 +13,6 @@ const createServer = async () => {
     origin: "*",
   });
 
-  // Register Swagger
   await app.register(swagger, swaggerOptions);
   await app.register(swaggerUi, swaggerUiOptions);
 

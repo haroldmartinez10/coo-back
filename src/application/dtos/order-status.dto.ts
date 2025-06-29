@@ -23,6 +23,6 @@ export interface OrderTrackingDto {
 
 export interface UpdateOrderStatusDto {
   orderId: number;
-  newStatus: "En espera" | "En tránsito" | "Entregado";
+  newStatus: "pending" | "in_transit" | "delivered";
   notes?: string;
 }

@@ -58,7 +58,6 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     getUserOrdersHandler
   );
 
-  // Obtener seguimiento de una orden específica (con historial completo)
   fastify.get(
     "/orders/:id/tracking",
     {
@@ -71,7 +70,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         params: {
           type: "object",
           properties: {
-            id: { type: "integer" },
+            id: { type: "string" },
           },
         },
       },
@@ -79,7 +78,6 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     getOrderTrackingHandler
   );
 
-  // Actualizar estado de una orden
   fastify.put(
     "/orders/:id/status",
     {
@@ -92,7 +90,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         params: {
           type: "object",
           properties: {
-            id: { type: "integer" },
+            id: { type: "string" },
           },
         },
         body: {
@@ -101,7 +99,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
           properties: {
             newStatus: {
               type: "string",
-              enum: ["En espera", "En tránsito", "Entregado"],
+              enum: ["pending", "in_transit", "delivered"],
             },
             notes: { type: "string" },
           },
@@ -111,7 +109,6 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     updateOrderStatusHandler
   );
 
-  // Obtener solo el historial de estados de una orden
   fastify.get(
     "/orders/:id/status-history",
     {
@@ -124,7 +121,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         params: {
           type: "object",
           properties: {
-            id: { type: "integer" },
+            id: { type: "string" },
           },
         },
       },

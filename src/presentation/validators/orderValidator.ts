@@ -11,9 +11,9 @@ export const createOrderSchema = z.object({
 });
 
 export const updateOrderStatusSchema = z.object({
-  newStatus: z.enum(["En espera", "En tránsito", "Entregado"], {
+  newStatus: z.enum(["pending", "in_transit", "delivered"], {
     errorMap: () => ({
-      message: "Estado inválido. Debe ser: En espera, En tránsito o Entregado",
+      message: "Estado inválido. Debe ser: pending, in_transit o delivered",
     }),
   }),
   notes: z.string().optional(),

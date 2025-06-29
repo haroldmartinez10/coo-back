@@ -41,7 +41,7 @@ export class OrderRepositoryImpl implements OrderRepository {
       await this.addStatusToHistoryWithConnection(
         connection,
         insertId,
-        "En espera",
+        "pending",
         "Orden creada"
       );
 

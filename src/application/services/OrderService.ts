@@ -50,15 +50,13 @@ export class OrderService {
   }
 
   async updateOrderStatus(updateData: UpdateOrderStatusDto): Promise<void> {
-    // Validar que el estado sea válido
-    const validStatuses = ["En espera", "En tránsito", "Entregado"];
+    const validStatuses = ["pending", "in_transit", "delivered"];
     if (!validStatuses.includes(updateData.newStatus)) {
       throw new Error(
         `Estado inválido. Debe ser uno de: ${validStatuses.join(", ")}`
       );
     }
 
-    // Verificar que la orden exista
     const existingOrder = await this.orderRepository.findOrderById(
       updateData.orderId
     );
@@ -66,14 +64,12 @@ export class OrderService {
       throw new Error("Orden no encontrada");
     }
 
-    // Validar transición de estado
     this.validateStatusTransition(existingOrder.status, updateData.newStatus);
 
     await this.orderRepository.updateOrderStatus(updateData);
   }
 
   async getOrderStatusHistory(orderId: number): Promise<OrderStatusDto[]> {
-    // Verificar que la orden exista
     const existingOrder = await this.orderRepository.findOrderById(orderId);
     if (!existingOrder) {
       throw new Error("Orden no encontrada");
@@ -87,9 +83,9 @@ export class OrderService {
     newStatus: string
   ): void {
     const statusFlow: Record<string, string[]> = {
-      "En espera": ["En tránsito"],
-      "En tránsito": ["Entregado"],
-      Entregado: [], // Estado final, no se puede cambiar
+      pending: ["in_transit"],
+      in_transit: ["delivered"],
+      delivered: [],
     };
 
     const allowedTransitions = statusFlow[currentStatus];

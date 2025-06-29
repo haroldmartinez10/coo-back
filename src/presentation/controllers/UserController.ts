@@ -32,6 +32,7 @@ export const registerUserHandler = async (
   reply: FastifyReply
 ) => {
   const repo = new UserRepository();
+
   const useCase = new RegisterUserUseCase(repo);
   try {
     const user = await useCase.execute(request.body as RegisterUserDTO);

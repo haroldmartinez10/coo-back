@@ -11,7 +11,6 @@ export class GetOrderTrackingUseCase {
       throw new Error("Orden no encontrada");
     }
 
-    // Verificar que la orden pertenezca al usuario
     if (orderTracking.userId !== userId) {
       throw new Error("No tienes permisos para ver esta orden");
     }
