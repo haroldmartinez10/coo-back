@@ -261,6 +261,15 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             notes: { type: "string" },
           },
         },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              message: { type: "string" },
+            },
+          },
+        },
       },
     },
     updateOrderStatusHandler

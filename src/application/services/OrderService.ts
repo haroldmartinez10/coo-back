@@ -121,7 +121,8 @@ export class OrderService {
       throw new Error("Orden no encontrada");
     }
 
-    this.validateStatusTransition(existingOrder.status, updateData.newStatus);
+    // Validación de transición removida - ahora se permite cualquier cambio de estado
+    // this.validateStatusTransition(existingOrder.status, updateData.newStatus);
 
     await this.orderRepository.updateOrderStatus(updateData);
   }
@@ -151,36 +152,5 @@ export class OrderService {
       order: existingOrder,
       statusHistory,
     };
-  }
-
-  private validateStatusTransition(
-    currentStatus: string,
-    newStatus: string
-  ): void {
-    const statusFlow: Record<string, string[]> = {
-      pending: ["in_transit"],
-      in_transit: ["delivered"],
-      delivered: [],
-    };
-
-    const allowedTransitions = statusFlow[currentStatus];
-
-    if (!allowedTransitions) {
-      throw new Error(`Estado actual desconocido: ${currentStatus}`);
-    }
-
-    if (allowedTransitions.length === 0) {
-      throw new Error(
-        `No se puede cambiar el estado de una orden que ya está ${currentStatus}`
-      );
-    }
-
-    if (!allowedTransitions.includes(newStatus)) {
-      throw new Error(
-        `Transición de estado inválida: de '${currentStatus}' a '${newStatus}'. Estados permitidos: ${allowedTransitions.join(
-          ", "
-        )}`
-      );
-    }
   }
 }
