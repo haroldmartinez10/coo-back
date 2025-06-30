@@ -35,7 +35,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       const rate = rates[0];
       return rate.base_price;
     } catch (error) {
-      console.error("Error finding rate:", error);
       throw new Error("Error de base de datos al buscar tarifa");
     }
   }
@@ -69,7 +68,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         pricePerKg: rate.price_per_kg,
       };
     } catch (error) {
-      console.error("Error finding rate details:", error);
       throw new Error("Error de base de datos al buscar detalles de tarifa");
     }
   }
@@ -123,7 +121,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         createdAt: savedQuote.created_at,
       };
     } catch (error) {
-      console.error("Error saving quote history:", error);
       throw new Error(
         "Error de base de datos al guardar historial de cotización"
       );
@@ -156,7 +153,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         createdAt: quote.created_at,
       }));
     } catch (error) {
-      console.error("Error getting quote history:", error);
       throw new Error(
         "Error de base de datos al obtener historial de cotizaciones"
       );

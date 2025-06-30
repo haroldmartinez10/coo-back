@@ -41,7 +41,6 @@ export const createOrderHandler = async (
       data: order,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
     return reply.status(400).send({
       success: false,
       message:
@@ -76,7 +75,6 @@ export const getUserOrdersHandler = async (
       data: orders,
     });
   } catch (error) {
-    console.error("Error getting user orders:", error);
     return reply.status(500).send({
       success: false,
       message: "Error al obtener las órdenes",
@@ -119,7 +117,6 @@ export const getOrderTrackingHandler = async (
       data: orderTracking,
     });
   } catch (error) {
-    console.error("Error getting order tracking:", error);
     const status =
       error instanceof Error && error.message.includes("permisos")
         ? 403
@@ -177,7 +174,6 @@ export const updateOrderStatusHandler = async (
       message: "Estado de la orden actualizado exitosamente",
     });
   } catch (error) {
-    console.error("Error updating order status:", error);
     const status =
       error instanceof Error && error.message.includes("no encontrada")
         ? 404
@@ -235,7 +231,6 @@ export const getOrderStatusHistoryHandler = async (
       data: statusHistory,
     });
   } catch (error) {
-    console.error("Error getting order status history:", error);
     const status =
       error instanceof Error && error.message.includes("permisos")
         ? 403
@@ -304,7 +299,6 @@ export const getOrderTrackingByCodeHandler = async (
       data: publicTrackingData,
     });
   } catch (error) {
-    console.error("Error getting order tracking by code:", error);
     const status =
       error instanceof Error && error.message.includes("no encontrada")
         ? 404

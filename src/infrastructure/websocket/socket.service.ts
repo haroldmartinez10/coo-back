@@ -31,10 +31,6 @@ export class SocketService {
       });
 
       this.setupEventHandlers();
-      console.log("🔌 Socket.IO inicializado");
-      if (this.isDevelopment) {
-        console.log("🚧 MODO DESARROLLO: Autenticación opcional para testing");
-      }
     }
   }
 
@@ -42,15 +38,10 @@ export class SocketService {
     if (!this.io) return;
 
     this.io.on("connection", (socket: Socket) => {
-      console.log(`Cliente conectado: ${socket.id}`);
-
       if (this.isDevelopment) {
         socket.on("test-join-room", (userId: string) => {
           const roomName = `room-state-${userId}`;
           socket.join(roomName);
-          console.log(
-            `🚧 [DEV] Usuario ${userId} unido al room sin auth: ${roomName}`
-          );
 
           socket.emit("test-room-joined", {
             success: true,
@@ -89,8 +80,6 @@ export class SocketService {
               },
             });
 
-            console.log(`🚧 [DEV] Orden simulada enviada al room ${roomName}`);
-
             socket.emit("test-order-sent", {
               success: true,
               message: "Orden simulada enviada",
@@ -122,7 +111,6 @@ export class SocketService {
             message: "Autenticado correctamente",
           });
         } catch (error) {
-          console.log(`Falló autenticación para socket ${socket.id}:`, error);
           socket.emit("authentication-error", {
             success: false,
             message: "Token inválido o expirado",
@@ -140,7 +128,6 @@ export class SocketService {
 
         const roomName = `room-state-${user.userId}`;
         socket.join(roomName);
-        console.log(`Usuario ${user.userId} re-unido al room: ${roomName}`);
 
         socket.emit("room-joined", {
           success: true,
@@ -157,7 +144,6 @@ export class SocketService {
 
         const roomName = `room-state-${user.userId}`;
         socket.leave(roomName);
-        console.log(`Usuario ${user.userId} salió del room: ${roomName}`);
       });
 
       socket.on("disconnect", () => {
@@ -165,16 +151,12 @@ export class SocketService {
         const userInfo = user
           ? `${user.userId} (${user.email})`
           : "no autenticado";
-        console.log(
-          `Cliente desconectado: ${socket.id} - Usuario: ${userInfo}`
-        );
       });
     });
   }
 
   public emitOrderUpdate(userId: number, orderData: any): void {
     if (!this.io) {
-      console.warn("⚠️ Socket.IO no inicializado");
       return;
     }
 
@@ -187,10 +169,5 @@ export class SocketService {
         timestamp: new Date().toISOString(),
       },
     });
-
-    console.log(
-      `📡 Orden actualizada enviada al room ${roomName}:`,
-      orderData.trackingCode
-    );
   }
 }

@@ -25,9 +25,7 @@ async function startServer() {
     );
     const socketService = SocketService.getInstance();
     socketService.initialize(app.server);
-    console.log(`WebSocket listening on port ${PORT}`);
   } catch (err) {
-    console.error("Error starting server:", err);
     process.exit(1);
   }
 }

@@ -49,8 +49,6 @@ export const quoteOrderHandler = async (
       },
     });
   } catch (error) {
-    console.error("Error calculating quote:", error);
-
     const errorMessage = (error as Error).message;
 
     if (errorMessage.includes("no está soportada")) {
@@ -91,7 +89,6 @@ export const getQuoteHistoryHandler = async (
       data: quotes,
     });
   } catch (error) {
-    console.error("Error getting quote history:", error);
     return reply.status(500).send({
       success: false,
       message: "Error al obtener el historial de cotizaciones",

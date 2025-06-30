@@ -8,6 +8,7 @@ import {
   OrderStatusHistoryDto,
   UpdateOrderStatusDto,
 } from "@application/dtos/order-status.dto";
+import { redisClient } from "@infrastructure/cache/redis-client";
 
 export class OrderService {
   constructor(
@@ -23,7 +24,11 @@ export class OrderService {
       await this.validateBasePrice(orderData);
     }
 
-    return await this.orderRepository.createOrder(orderData, userId);
+    const order = await this.orderRepository.createOrder(orderData, userId);
+
+    await redisClient.invalidateUserOrders(userId);
+
+    return order;
   }
 
   private async validateBasePrice(orderData: CreateOrderDTO): Promise<void> {
@@ -63,7 +68,17 @@ export class OrderService {
   }
 
   async getUserOrders(userId: number): Promise<OrderDTO[]> {
-    return await this.orderRepository.findOrdersByUserId(userId);
+    const cached = await redisClient.getUserOrdersFromCache(userId);
+    if (cached) {
+      console.log(cached);
+      return cached;
+    }
+
+    const orders = await this.orderRepository.findOrdersByUserId(userId);
+
+    await redisClient.saveUserOrdersToCache(userId, orders);
+
+    return orders;
   }
 
   async getAllOrders(): Promise<OrderDTO[]> {
@@ -99,6 +114,8 @@ export class OrderService {
     }
 
     await this.orderRepository.updateOrderStatus(updateData);
+
+    await redisClient.invalidateUserOrders(existingOrder.userId);
   }
 
   async getOrderStatusHistory(orderId: number): Promise<OrderStatusDto[]> {
