@@ -25,7 +25,7 @@ export class JwtService {
     try {
       return jwt.verify(token, this.secretKey);
     } catch (error) {
-      throw new Error("Invalid token");
+      throw new Error("Token inválido");
     }
   }
 }

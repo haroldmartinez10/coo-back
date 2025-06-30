@@ -25,7 +25,7 @@ export class UserRepository implements IUserRepository {
       );
     } catch (error) {
       console.error("Error finding user by email:", error);
-      throw new Error("Database error while finding user");
+      throw new Error("Error de base de datos al buscar usuario");
     }
   }
 
@@ -48,7 +48,7 @@ export class UserRepository implements IUserRepository {
       return savedUser;
     } catch (error) {
       console.error("Error saving user:", error);
-      throw new Error("Database error while saving user");
+      throw new Error("Error de base de datos al guardar usuario");
     }
   }
 }

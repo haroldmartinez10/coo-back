@@ -36,7 +36,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       return rate.base_price;
     } catch (error) {
       console.error("Error finding rate:", error);
-      throw new Error("Database error while finding rate");
+      throw new Error("Error de base de datos al buscar tarifa");
     }
   }
 
@@ -70,7 +70,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       };
     } catch (error) {
       console.error("Error finding rate details:", error);
-      throw new Error("Database error while finding rate details");
+      throw new Error("Error de base de datos al buscar detalles de tarifa");
     }
   }
 
@@ -124,7 +124,9 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       };
     } catch (error) {
       console.error("Error saving quote history:", error);
-      throw new Error("Database error while saving quote history");
+      throw new Error(
+        "Error de base de datos al guardar historial de cotización"
+      );
     }
   }
 

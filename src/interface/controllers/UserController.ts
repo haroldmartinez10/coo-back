@@ -15,7 +15,7 @@ export const loginUserHandler = async (
   try {
     const result = await useCase.execute(request.body as LoginUserDTO);
     reply.code(200).send({
-      message: "User logged in successfully",
+      message: "Usuario autenticado exitosamente",
       token: result.token,
       user: {
         email: result.user.email,
@@ -38,7 +38,7 @@ export const registerUserHandler = async (
   try {
     const user = await useCase.execute(request.body as RegisterUserDTO);
     reply.code(201).send({
-      message: "User registered successfully",
+      message: "Usuario registrado exitosamente",
       user: {
         id: user.id,
         email: user.email,

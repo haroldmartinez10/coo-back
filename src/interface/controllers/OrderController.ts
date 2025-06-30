@@ -218,7 +218,9 @@ export const getOrderStatusHistoryHandler = async (
     const userRole = (request as any).user.role;
 
     const orderRepository = new OrderRepositoryImpl();
+
     const orderService = new OrderService(orderRepository);
+
     const getOrderStatusHistoryUseCase = new GetOrderStatusHistoryUseCase(
       orderService
     );

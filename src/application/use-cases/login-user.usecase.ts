@@ -18,11 +18,11 @@ export class LoginUserUseCase {
   async execute(data: LoginUserDTO): Promise<LoginResult> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Usuario no encontrado");
     }
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if (!isPasswordValid) {
-      throw new Error("Invalid password");
+      throw new Error("Contraseña inválida");
     }
 
     const token = this.jwtService.generateToken({

@@ -18,7 +18,9 @@ export const authMiddleware = async (
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return reply.code(401).send({ error: "Authorization header required" });
+      return reply
+        .code(401)
+        .send({ error: "Encabezado de autorización requerido" });
     }
 
     const token = authHeader.substring(7);
@@ -28,7 +30,7 @@ export const authMiddleware = async (
 
     (request as AuthenticatedRequest).user = decoded;
   } catch (error) {
-    return reply.code(401).send({ error: "Invalid token" });
+    return reply.code(401).send({ error: "Token inválido" });
   }
 };
 
@@ -41,7 +43,7 @@ export const adminMiddleware = async (
   const user = (request as AuthenticatedRequest).user;
 
   if (user.role !== "admin") {
-    return reply.code(403).send({ error: "Admin access required" });
+    return reply.code(403).send({ error: "Acceso de administrador requerido" });
   }
 };
 
@@ -54,6 +56,6 @@ export const userOrAdminMiddleware = async (
   const user = (request as AuthenticatedRequest).user;
 
   if (user.role !== "admin" && user.role !== "user") {
-    return reply.code(403).send({ error: "User access required" });
+    return reply.code(403).send({ error: "Acceso de usuario requerido" });
   }
 };
