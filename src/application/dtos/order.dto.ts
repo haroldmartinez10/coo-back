@@ -7,6 +7,8 @@ export interface OrderDTO {
   height: number;
   width: number;
   length: number;
+  basePrice: number;
+  trackingCode: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;

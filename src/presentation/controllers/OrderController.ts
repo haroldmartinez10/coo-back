@@ -2,9 +2,11 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateOrderUseCase } from "@application/use-cases/create-order.usecase";
 import { GetUserOrdersUseCase } from "@application/use-cases/get-user-orders.usecase";
 import { GetOrderTrackingUseCase } from "@application/use-cases/get-order-tracking.usecase";
+import { GetOrderTrackingByCodeUseCase } from "@application/use-cases/get-order-tracking-by-code.usecase";
 import { UpdateOrderStatusUseCase } from "@application/use-cases/update-order-status.usecase";
 import { GetOrderStatusHistoryUseCase } from "@application/use-cases/get-order-status-history.usecase";
 import { OrderRepositoryImpl } from "@infrastructure/repositories/OrderRepository";
+import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
 import { OrderService } from "@application/services/OrderService";
 import {
   createOrderSchema,
@@ -30,7 +32,8 @@ export const createOrderHandler = async (
     const userId = (request as any).user.userId;
 
     const orderRepository = new OrderRepositoryImpl();
-    const orderService = new OrderService(orderRepository);
+    const quoteRepository = new QuoteRepositoryImpl();
+    const orderService = new OrderService(orderRepository, quoteRepository);
     const createOrderUseCase = new CreateOrderUseCase(orderService);
 
     const order = await createOrderUseCase.execute(orderData, userId);
@@ -59,6 +62,7 @@ export const getUserOrdersHandler = async (
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
+
     const getUserOrdersUseCase = new GetUserOrdersUseCase(orderService);
 
     const orders = await getUserOrdersUseCase.execute(userId);
@@ -235,6 +239,72 @@ export const getOrderStatusHistoryHandler = async (
         error instanceof Error
           ? error.message
           : "Error al obtener el historial",
+    });
+  }
+};
+
+export const getOrderTrackingByCodeHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const { trackingCode } = request.params as { trackingCode: string };
+
+    if (
+      !trackingCode ||
+      typeof trackingCode !== "string" ||
+      trackingCode.trim().length === 0
+    ) {
+      return reply.status(400).send({
+        success: false,
+        message: "Código de seguimiento es requerido",
+      });
+    }
+
+    const orderRepository = new OrderRepositoryImpl();
+    const orderService = new OrderService(orderRepository);
+    const getOrderTrackingByCodeUseCase = new GetOrderTrackingByCodeUseCase(
+      orderService
+    );
+
+    const orderTracking = await getOrderTrackingByCodeUseCase.execute(
+      trackingCode.trim().toUpperCase()
+    );
+
+    const publicTrackingData = {
+      id: orderTracking.id,
+      originCity: orderTracking.originCity,
+      destinationCity: orderTracking.destinationCity,
+      weight: orderTracking.weight,
+      height: orderTracking.height,
+      width: orderTracking.width,
+      length: orderTracking.length,
+      basePrice: orderTracking.basePrice,
+      trackingCode: orderTracking.trackingCode,
+      status: orderTracking.status,
+      createdAt: orderTracking.createdAt,
+      updatedAt: orderTracking.updatedAt,
+      statusHistory: orderTracking.statusHistory,
+    };
+
+    return reply.status(200).send({
+      success: true,
+      message: "Seguimiento de orden obtenido exitosamente",
+      data: publicTrackingData,
+    });
+  } catch (error) {
+    console.error("Error getting order tracking by code:", error);
+    const status =
+      error instanceof Error && error.message.includes("no encontrada")
+        ? 404
+        : 500;
+
+    return reply.status(status).send({
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error al obtener el seguimiento",
     });
   }
 };

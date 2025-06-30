@@ -7,11 +7,14 @@ CREATE TABLE IF NOT EXISTS shipping_orders (
   height DECIMAL(8,2) NOT NULL,
   width DECIMAL(8,2) NOT NULL,
   length DECIMAL(8,2) NOT NULL,
+  base_price INT NOT NULL DEFAULT 0,
+  tracking_code VARCHAR(20) UNIQUE NOT NULL,
   status VARCHAR(50) DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   INDEX idx_user_id (user_id),
   INDEX idx_status (status),
+  INDEX idx_tracking_code (tracking_code),
   INDEX idx_created_at (created_at)
 ); 

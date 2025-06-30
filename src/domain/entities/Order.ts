@@ -7,6 +7,8 @@ export class Order {
   public height: number;
   public width: number;
   public length: number;
+  public basePrice: number;
+  public trackingCode: string;
   public status: string;
   public createdAt?: Date;
   public updatedAt?: Date;
@@ -19,6 +21,8 @@ export class Order {
     height: number,
     width: number,
     length: number,
+    basePrice: number,
+    trackingCode: string,
     status: string = "pending"
   ) {
     this.userId = userId;
@@ -28,6 +32,8 @@ export class Order {
     this.height = height;
     this.width = width;
     this.length = length;
+    this.basePrice = basePrice;
+    this.trackingCode = trackingCode;
     this.status = status;
   }
 }

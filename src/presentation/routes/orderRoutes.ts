@@ -3,6 +3,7 @@ import {
   createOrderHandler,
   getUserOrdersHandler,
   getOrderTrackingHandler,
+  getOrderTrackingByCodeHandler,
   updateOrderStatusHandler,
   getOrderStatusHistoryHandler,
 } from "../controllers/OrderController";
@@ -27,6 +28,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             "height",
             "width",
             "length",
+            "basePrice",
           ],
           properties: {
             originCity: { type: "string" },
@@ -35,6 +37,34 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             height: { type: "number" },
             width: { type: "number" },
             length: { type: "number" },
+            basePrice: { type: "integer", minimum: 1 },
+          },
+        },
+        response: {
+          201: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              message: { type: "string" },
+              data: {
+                type: "object",
+                properties: {
+                  id: { type: "integer" },
+                  userId: { type: "integer" },
+                  originCity: { type: "string" },
+                  destinationCity: { type: "string" },
+                  weight: { type: "number" },
+                  height: { type: "number" },
+                  width: { type: "number" },
+                  length: { type: "number" },
+                  basePrice: { type: "integer" },
+                  trackingCode: { type: "string" },
+                  status: { type: "string" },
+                  createdAt: { type: "string" },
+                  updatedAt: { type: "string" },
+                },
+              },
+            },
           },
         },
       },
@@ -49,8 +79,38 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         summary: "Obtener órdenes del usuario",
-        description: "Obtiene todas las órdenes del usuario",
+        description: "Obtiene todas las órdenes del usuario (historial)",
         security: [{ Bearer: [] }],
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              message: { type: "string" },
+              data: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "integer" },
+                    userId: { type: "integer" },
+                    originCity: { type: "string" },
+                    destinationCity: { type: "string" },
+                    weight: { type: "number" },
+                    height: { type: "number" },
+                    width: { type: "number" },
+                    length: { type: "number" },
+                    basePrice: { type: "integer" },
+                    trackingCode: { type: "string" },
+                    status: { type: "string" },
+                    createdAt: { type: "string" },
+                    updatedAt: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     getUserOrdersHandler
@@ -71,9 +131,105 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             id: { type: "string" },
           },
         },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              message: { type: "string" },
+              data: {
+                type: "object",
+                properties: {
+                  id: { type: "integer" },
+                  userId: { type: "integer" },
+                  originCity: { type: "string" },
+                  destinationCity: { type: "string" },
+                  weight: { type: "number" },
+                  height: { type: "number" },
+                  width: { type: "number" },
+                  length: { type: "number" },
+                  basePrice: { type: "integer" },
+                  trackingCode: { type: "string" },
+                  status: { type: "string" },
+                  createdAt: { type: "string" },
+                  updatedAt: { type: "string" },
+                  statusHistory: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        status: { type: "string" },
+                        changed_at: { type: "string" },
+                        notes: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     getOrderTrackingHandler
+  );
+
+  fastify.get(
+    "/tracking/:trackingCode",
+    {
+      schema: {
+        tags: ["Tracking"],
+        summary: "Seguimiento por código de radicado",
+        description:
+          "Obtiene el seguimiento de una orden usando su código de radicado (no requiere autenticación)",
+        params: {
+          type: "object",
+          properties: {
+            trackingCode: { type: "string" },
+          },
+        },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              message: { type: "string" },
+              data: {
+                type: "object",
+                properties: {
+                  id: { type: "integer" },
+                  originCity: { type: "string" },
+                  destinationCity: { type: "string" },
+                  weight: { type: "number" },
+                  height: { type: "number" },
+                  width: { type: "number" },
+                  length: { type: "number" },
+                  basePrice: { type: "integer" },
+                  trackingCode: { type: "string" },
+                  status: { type: "string" },
+                  createdAt: { type: "string" },
+                  updatedAt: { type: "string" },
+                  statusHistory: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        status: { type: "string" },
+                        changed_at: { type: "string" },
+                        notes: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    getOrderTrackingByCodeHandler
   );
 
   fastify.put(
@@ -115,12 +271,57 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         summary: "Obtener historial de estados",
-        description: "Obtiene el historial de estados de una orden",
+        description:
+          "Obtiene el historial de estados de una orden con detalles completos",
         security: [{ Bearer: [] }],
         params: {
           type: "object",
           properties: {
             id: { type: "string" },
+          },
+        },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              message: { type: "string" },
+              data: {
+                type: "object",
+                properties: {
+                  order: {
+                    type: "object",
+                    properties: {
+                      id: { type: "integer" },
+                      userId: { type: "integer" },
+                      originCity: { type: "string" },
+                      destinationCity: { type: "string" },
+                      weight: { type: "number" },
+                      height: { type: "number" },
+                      width: { type: "number" },
+                      length: { type: "number" },
+                      basePrice: { type: "integer" },
+                      trackingCode: { type: "string" },
+                      status: { type: "string" },
+                      createdAt: { type: "string" },
+                      updatedAt: { type: "string" },
+                    },
+                  },
+                  statusHistory: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        status: { type: "string" },
+                        changed_at: { type: "string" },
+                        notes: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
