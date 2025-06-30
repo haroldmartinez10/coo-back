@@ -121,9 +121,6 @@ export class OrderService {
       throw new Error("Orden no encontrada");
     }
 
-    // Validación de transición removida - ahora se permite cualquier cambio de estado
-    // this.validateStatusTransition(existingOrder.status, updateData.newStatus);
-
     await this.orderRepository.updateOrderStatus(updateData);
   }
 

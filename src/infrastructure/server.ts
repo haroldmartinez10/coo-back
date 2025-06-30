@@ -10,7 +10,7 @@ const createServer = async () => {
   });
 
   await app.register(cors, {
-    origin: true, // Permitir todas las origins
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: [
       "Origin",
@@ -21,7 +21,7 @@ const createServer = async () => {
       "Cache-Control",
       "X-HTTP-Method-Override",
     ],
-    credentials: false, // Necesario cuando origin es true
+    credentials: false,
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
