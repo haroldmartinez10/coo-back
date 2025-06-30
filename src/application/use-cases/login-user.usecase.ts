@@ -15,7 +15,7 @@ export class LoginUserUseCase {
     private jwtService: JwtService
   ) {}
 
-  async execute(data: LoginUserDTO): Promise<LoginResult> {
+  async login(data: LoginUserDTO): Promise<LoginResult> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
       throw new Error("Usuario no encontrado");

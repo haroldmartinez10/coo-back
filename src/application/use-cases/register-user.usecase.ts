@@ -6,7 +6,7 @@ import { RegisterUserDTO } from "@application/dtos/user.dto";
 export class RegisterUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
-  async execute(data: RegisterUserDTO): Promise<User> {
+  async register(data: RegisterUserDTO): Promise<User> {
     const existing = await this.userRepository.findByEmail(data.email);
     if (existing) throw new Error("Correo electrónico ya registrado");
 

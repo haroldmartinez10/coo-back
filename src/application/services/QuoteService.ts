@@ -33,7 +33,7 @@ export class QuoteService {
 
     if (!supportedCities.includes(originCity)) {
       throw new Error(
-        `Origin city '${originCity}' is not supported. Supported cities: ${supportedCities.join(
+        `La ciudad de origen '${originCity}' no está soportada. Ciudades soportadas: ${supportedCities.join(
           ", "
         )}`
       );
@@ -41,7 +41,7 @@ export class QuoteService {
 
     if (!supportedCities.includes(destinationCity)) {
       throw new Error(
-        `Destination city '${destinationCity}' is not supported. Supported cities: ${supportedCities.join(
+        `La ciudad de destino '${destinationCity}' no está soportada. Ciudades soportadas: ${supportedCities.join(
           ", "
         )}`
       );
@@ -69,7 +69,7 @@ export class QuoteService {
 
     if (!rateData) {
       throw new Error(
-        `No rate found for route ${dto.originCity} -> ${dto.destinationCity} with weight ${selectedWeight}kg`
+        `No se encontró tarifa para la ruta ${dto.originCity} -> ${dto.destinationCity} con peso ${selectedWeight}kg`
       );
     }
 

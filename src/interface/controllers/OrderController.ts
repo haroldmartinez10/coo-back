@@ -1,9 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateOrderUseCase } from "@application/use-cases/create-order.usecase";
 import { GetUserOrdersUseCase } from "@application/use-cases/get-user-orders.usecase";
 import { GetOrderTrackingUseCase } from "@application/use-cases/get-order-tracking.usecase";
 import { GetOrderTrackingByCodeUseCase } from "@application/use-cases/get-order-tracking-by-code.usecase";
-import { UpdateOrderStatusUseCase } from "@application/use-cases/update-order-status.usecase";
 import { GetOrderStatusHistoryUseCase } from "@application/use-cases/get-order-status-history.usecase";
 import { OrderRepositoryImpl } from "@infrastructure/repositories/OrderRepository";
 import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
@@ -34,9 +32,8 @@ export const createOrderHandler = async (
     const orderRepository = new OrderRepositoryImpl();
     const quoteRepository = new QuoteRepositoryImpl();
     const orderService = new OrderService(orderRepository, quoteRepository);
-    const createOrderUseCase = new CreateOrderUseCase(orderService);
 
-    const order = await createOrderUseCase.execute(orderData, userId);
+    const order = await orderService.createOrder(orderData, userId);
 
     return reply.status(201).send({
       success: true,
@@ -67,7 +64,7 @@ export const getUserOrdersHandler = async (
 
     const getUserOrdersUseCase = new GetUserOrdersUseCase(orderService);
 
-    const orders = await getUserOrdersUseCase.execute(userId, isAdmin);
+    const orders = await getUserOrdersUseCase.getUserOrders(userId, isAdmin);
 
     const message = isAdmin
       ? "Todas las órdenes obtenidas exitosamente"
@@ -107,9 +104,10 @@ export const getOrderTrackingHandler = async (
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
+
     const getOrderTrackingUseCase = new GetOrderTrackingUseCase(orderService);
 
-    const orderTracking = await getOrderTrackingUseCase.execute(
+    const orderTracking = await getOrderTrackingUseCase.getOrderTracking(
       orderId,
       userId,
       userRole
@@ -167,9 +165,8 @@ export const updateOrderStatusHandler = async (
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
-    const updateOrderStatusUseCase = new UpdateOrderStatusUseCase(orderService);
 
-    await updateOrderStatusUseCase.execute({
+    await orderService.updateOrderStatus({
       orderId,
       newStatus,
       notes,
@@ -225,11 +222,12 @@ export const getOrderStatusHistoryHandler = async (
       orderService
     );
 
-    const statusHistory = await getOrderStatusHistoryUseCase.execute(
-      orderId,
-      userId,
-      userRole
-    );
+    const statusHistory =
+      await getOrderStatusHistoryUseCase.getOrderStatusHistory(
+        orderId,
+        userId,
+        userRole
+      );
 
     return reply.status(200).send({
       success: true,
@@ -279,9 +277,10 @@ export const getOrderTrackingByCodeHandler = async (
       orderService
     );
 
-    const orderTracking = await getOrderTrackingByCodeUseCase.execute(
-      trackingCode.trim().toUpperCase()
-    );
+    const orderTracking =
+      await getOrderTrackingByCodeUseCase.getOrderTrackingByCode(
+        trackingCode.trim().toUpperCase()
+      );
 
     const publicTrackingData = {
       id: orderTracking.id,

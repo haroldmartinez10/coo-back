@@ -4,7 +4,7 @@ import { OrderStatusHistoryDto } from "@application/dtos/order-status.dto";
 export class GetOrderStatusHistoryUseCase {
   constructor(private orderService: OrderService) {}
 
-  async execute(
+  async getOrderStatusHistory(
     orderId: number,
     userId: number,
     userRole: string = "user"

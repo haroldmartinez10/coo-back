@@ -4,7 +4,9 @@ import { OrderTrackingDto } from "@application/dtos/order-status.dto";
 export class GetOrderTrackingByCodeUseCase {
   constructor(private orderService: OrderService) {}
 
-  async execute(trackingCode: string): Promise<OrderTrackingDto> {
+  async getOrderTrackingByCode(
+    trackingCode: string
+  ): Promise<OrderTrackingDto> {
     const orderTracking = await this.orderService.getOrderTrackingByCode(
       trackingCode
     );

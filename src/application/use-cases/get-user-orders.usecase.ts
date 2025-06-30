@@ -4,7 +4,10 @@ import { OrderDTO } from "@application/dtos/order.dto";
 export class GetUserOrdersUseCase {
   constructor(private orderService: OrderService) {}
 
-  async execute(userId: number, isAdmin: boolean = false): Promise<OrderDTO[]> {
+  async getUserOrders(
+    userId: number,
+    isAdmin: boolean = false
+  ): Promise<OrderDTO[]> {
     if (isAdmin) {
       return await this.orderService.getAllOrders();
     }

@@ -53,7 +53,7 @@ export class OrderRepositoryImpl implements OrderRepository {
 
       const createdOrder = await this.findOrderById(insertId);
       if (!createdOrder) {
-        throw new Error("Error creating order");
+        throw new Error("Error al crear la orden");
       }
 
       return createdOrder;

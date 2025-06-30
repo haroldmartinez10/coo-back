@@ -12,7 +12,10 @@ export class QuoteOrderUseCase {
     this.quoteService = new QuoteService(quoteRepo);
   }
 
-  async execute(dto: QuoteOrderDTO, userId: number): Promise<QuoteCalculation> {
+  async quoteOrder(
+    dto: QuoteOrderDTO,
+    userId: number
+  ): Promise<QuoteCalculation> {
     return await this.quoteService.calculateAndSaveQuote(dto, userId);
   }
 }

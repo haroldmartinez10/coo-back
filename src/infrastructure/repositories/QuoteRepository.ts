@@ -157,7 +157,9 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       }));
     } catch (error) {
       console.error("Error getting quote history:", error);
-      throw new Error("Database error while getting quote history");
+      throw new Error(
+        "Error de base de datos al obtener historial de cotizaciones"
+      );
     }
   }
 }

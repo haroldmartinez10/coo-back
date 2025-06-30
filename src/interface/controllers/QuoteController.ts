@@ -1,8 +1,10 @@
 import { QuoteOrderUseCase } from "@application/use-cases/quote-order.use-case";
-import { GetQuoteHistoryUseCase } from "@application/use-cases/get-quote-history.usecase";
 import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { quoteRequestSchema } from "../validators/quoteValidator";
+import { LoginUserUseCase } from "@application/use-cases/login-user.usecase";
+import { UserRepository } from "@infrastructure/repositories/UserRepository";
+import { JwtService } from "@application/services/JwtService";
 
 export const quoteOrderHandler = async (
   request: FastifyRequest,
@@ -25,7 +27,7 @@ export const quoteOrderHandler = async (
 
     const userId = (request as any).user.userId;
 
-    const quoteCalculation = await quoteUseCase.execute(
+    const quoteCalculation = await quoteUseCase.quoteOrder(
       validation.data,
       userId
     );
@@ -51,14 +53,14 @@ export const quoteOrderHandler = async (
 
     const errorMessage = (error as Error).message;
 
-    if (errorMessage.includes("not supported")) {
+    if (errorMessage.includes("no está soportada")) {
       return reply.status(400).send({
         success: false,
         message: errorMessage,
       });
     }
 
-    if (errorMessage.includes("No rate found")) {
+    if (errorMessage.includes("No se encontró tarifa")) {
       return reply.status(404).send({
         success: false,
         message: errorMessage,
@@ -78,11 +80,10 @@ export const getQuoteHistoryHandler = async (
 ) => {
   try {
     const quoteRepository = new QuoteRepositoryImpl();
-    const getHistoryUseCase = new GetQuoteHistoryUseCase(quoteRepository);
 
     const userId = (request as any).user.userId;
 
-    const quotes = await getHistoryUseCase.execute(userId);
+    const quotes = await quoteRepository.getQuoteHistory(userId);
 
     return reply.status(200).send({
       success: true,

@@ -4,7 +4,7 @@ import { OrderTrackingDto } from "@application/dtos/order-status.dto";
 export class GetOrderTrackingUseCase {
   constructor(private orderService: OrderService) {}
 
-  async execute(
+  async getOrderTracking(
     orderId: number,
     userId: number,
     userRole: string = "user"

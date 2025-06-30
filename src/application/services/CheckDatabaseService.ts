@@ -9,7 +9,7 @@ const checkDatabaseService = async () => {
     connection.release();
     await runMigrations();
   } catch (error) {
-    console.error("Database connection failed:", error);
+    console.error("Conexión a la base de datos falló:", error);
     throw error;
   }
 };

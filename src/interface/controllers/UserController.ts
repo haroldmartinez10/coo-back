@@ -12,8 +12,9 @@ export const loginUserHandler = async (
   const repo = new UserRepository();
   const jwtService = new JwtService();
   const useCase = new LoginUserUseCase(repo, jwtService);
+
   try {
-    const result = await useCase.execute(request.body as LoginUserDTO);
+    const result = await useCase.login(request.body as LoginUserDTO);
     reply.code(200).send({
       message: "Usuario autenticado exitosamente",
       token: result.token,
@@ -36,7 +37,7 @@ export const registerUserHandler = async (
 
   const useCase = new RegisterUserUseCase(repo);
   try {
-    const user = await useCase.execute(request.body as RegisterUserDTO);
+    const user = await useCase.register(request.body as RegisterUserDTO);
     reply.code(201).send({
       message: "Usuario registrado exitosamente",
       user: {
