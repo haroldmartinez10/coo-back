@@ -82,6 +82,10 @@ export class OrderService {
     return await this.orderRepository.findOrdersByUserId(userId);
   }
 
+  async getAllOrders(): Promise<OrderDTO[]> {
+    return await this.orderRepository.findAllOrders();
+  }
+
   async getOrderById(id: number): Promise<OrderDTO | null> {
     return await this.orderRepository.findOrderById(id);
   }

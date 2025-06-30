@@ -101,6 +101,18 @@ export class OrderRepositoryImpl implements OrderRepository {
     return this.mapRowsToOrders(rows as any[]);
   }
 
+  async findAllOrders(): Promise<OrderDTO[]> {
+    const query = `
+      SELECT id, user_id, origin_city, destination_city, weight, height, width, length, 
+             base_price, tracking_code, status, created_at, updated_at
+      FROM shipping_orders 
+      ORDER BY created_at DESC
+    `;
+
+    const [rows] = await pool.execute(query);
+    return this.mapRowsToOrders(rows as any[]);
+  }
+
   async findOrderById(id: number): Promise<OrderDTO | null> {
     const query = `
       SELECT id, user_id, origin_city, destination_city, weight, height, width, length, 

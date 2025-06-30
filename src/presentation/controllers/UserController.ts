@@ -20,6 +20,7 @@ export const loginUserHandler = async (
       user: {
         email: result.user.email,
         name: result.user.name,
+        role: result.user.role,
       },
     });
   } catch (err) {

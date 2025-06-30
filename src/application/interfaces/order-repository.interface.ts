@@ -9,6 +9,7 @@ import {
 export interface OrderRepository {
   createOrder(orderData: CreateOrderDTO, userId: number): Promise<OrderDTO>;
   findOrdersByUserId(userId: number): Promise<OrderDTO[]>;
+  findAllOrders(): Promise<OrderDTO[]>;
   findOrderById(id: number): Promise<OrderDTO | null>;
   findOrderByTrackingCode(trackingCode: string): Promise<OrderDTO | null>;
   findOrderWithTrackingById(id: number): Promise<OrderTrackingDto | null>;

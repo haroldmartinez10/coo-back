@@ -74,6 +74,7 @@ export default async function userRoutes(fastify: FastifyInstance) {
                 properties: {
                   email: { type: "string" },
                   name: { type: "string" },
+                  role: { type: "string", enum: ["admin", "user"] },
                 },
               },
             },

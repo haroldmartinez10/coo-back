@@ -6,12 +6,16 @@ export class GetOrderStatusHistoryUseCase {
 
   async execute(
     orderId: number,
-    userId: number
+    userId: number,
+    userRole: string = "user"
   ): Promise<OrderStatusHistoryDto> {
     const orderStatusHistory =
       await this.orderService.getOrderStatusHistoryWithDetails(orderId);
 
-    if (orderStatusHistory.order.userId !== userId) {
+    const isOwner = orderStatusHistory.order.userId === userId;
+    const isAdmin = userRole === "admin";
+
+    if (!isOwner && !isAdmin) {
       throw new Error("No tienes permisos para ver esta orden");
     }
 

@@ -59,17 +59,23 @@ export const getUserOrdersHandler = async (
 ) => {
   try {
     const userId = (request as any).user.userId;
+    const userRole = (request as any).user.role;
+    const isAdmin = userRole === "admin";
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
 
     const getUserOrdersUseCase = new GetUserOrdersUseCase(orderService);
 
-    const orders = await getUserOrdersUseCase.execute(userId);
+    const orders = await getUserOrdersUseCase.execute(userId, isAdmin);
+
+    const message = isAdmin
+      ? "Todas las órdenes obtenidas exitosamente"
+      : "Órdenes obtenidas exitosamente";
 
     return reply.status(200).send({
       success: true,
-      message: "Órdenes obtenidas exitosamente",
+      message,
       data: orders,
     });
   } catch (error) {
@@ -97,6 +103,7 @@ export const getOrderTrackingHandler = async (
 
     const { id: orderId } = paramValidation.data;
     const userId = (request as any).user.userId;
+    const userRole = (request as any).user.role;
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
@@ -104,7 +111,8 @@ export const getOrderTrackingHandler = async (
 
     const orderTracking = await getOrderTrackingUseCase.execute(
       orderId,
-      userId
+      userId,
+      userRole
     );
 
     return reply.status(200).send({
@@ -207,6 +215,7 @@ export const getOrderStatusHistoryHandler = async (
 
     const { id: orderId } = paramValidation.data;
     const userId = (request as any).user.userId;
+    const userRole = (request as any).user.role;
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
@@ -216,7 +225,8 @@ export const getOrderStatusHistoryHandler = async (
 
     const statusHistory = await getOrderStatusHistoryUseCase.execute(
       orderId,
-      userId
+      userId,
+      userRole
     );
 
     return reply.status(200).send({

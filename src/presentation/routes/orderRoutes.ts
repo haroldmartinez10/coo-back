@@ -79,7 +79,8 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         summary: "Obtener órdenes del usuario",
-        description: "Obtiene todas las órdenes del usuario (historial)",
+        description:
+          "Obtiene todas las órdenes del usuario (historial). Los administradores verán todas las órdenes de todos los usuarios.",
         security: [{ Bearer: [] }],
         response: {
           200: {
@@ -123,7 +124,8 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         summary: "Obtener seguimiento de orden",
-        description: "Obtiene el seguimiento completo de una orden",
+        description:
+          "Obtiene el seguimiento completo de una orden. Los administradores pueden ver cualquier orden.",
         security: [{ Bearer: [] }],
         params: {
           type: "object",
@@ -272,7 +274,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         tags: ["Orders"],
         summary: "Obtener historial de estados",
         description:
-          "Obtiene el historial de estados de una orden con detalles completos",
+          "Obtiene el historial de estados de una orden con detalles completos. Los administradores pueden ver cualquier orden.",
         security: [{ Bearer: [] }],
         params: {
           type: "object",
