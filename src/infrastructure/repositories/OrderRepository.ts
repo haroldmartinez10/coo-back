@@ -204,6 +204,13 @@ export class OrderRepositoryImpl implements OrderRepository {
       );
 
       await connection.commit();
+
+      const updatedOrder = await this.findOrderById(updateData.orderId);
+      if (updatedOrder) {
+        const { SocketService } = await import("../websocket/socket.service");
+        const socketService = SocketService.getInstance();
+        socketService.emitOrderUpdate(updatedOrder.userId, updatedOrder);
+      }
     } catch (error) {
       await connection.rollback();
       throw error;
