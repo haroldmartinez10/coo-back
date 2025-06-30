@@ -50,21 +50,25 @@ export class OrderService {
     }
 
     try {
+      const volumeWeight =
+        (orderData.height * orderData.width * orderData.length) / 2500;
+      const selectedWeight = Math.max(orderData.weight, volumeWeight);
+
       const expectedBasePrice = await this.quoteRepository.findRate(
         orderData.originCity,
         orderData.destinationCity,
-        orderData.weight
+        selectedWeight
       );
 
       if (expectedBasePrice === null) {
         throw new Error(
-          `No se encontró tarifa para la ruta ${orderData.originCity} -> ${orderData.destinationCity} con peso ${orderData.weight}kg`
+          `No se encontró tarifa para la ruta ${orderData.originCity} -> ${orderData.destinationCity} con peso ${selectedWeight}kg (peso real: ${orderData.weight}kg, peso volumétrico: ${volumeWeight}kg)`
         );
       }
 
       if (orderData.basePrice !== expectedBasePrice) {
         throw new Error(
-          `Precio base inválido. Se esperaba ${expectedBasePrice} pero se recibió ${orderData.basePrice} para la ruta ${orderData.originCity} -> ${orderData.destinationCity} con peso ${orderData.weight}kg`
+          `Precio base inválido. Se esperaba ${expectedBasePrice} pero se recibió ${orderData.basePrice} para la ruta ${orderData.originCity} -> ${orderData.destinationCity} con peso ${selectedWeight}kg (peso real: ${orderData.weight}kg, peso volumétrico: ${volumeWeight}kg)`
         );
       }
     } catch (error) {
