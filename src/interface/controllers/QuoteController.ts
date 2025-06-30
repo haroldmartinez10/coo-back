@@ -2,19 +2,20 @@ import { QuoteOrderUseCase } from "@application/use-cases/quote-order.use-case";
 import { GetQuoteHistoryUseCase } from "@application/use-cases/get-quote-history.usecase";
 import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { validateQuoteRequest } from "../validators/quoteValidator";
+import { quoteRequestSchema } from "../validators/quoteValidator";
 
 export const quoteOrderHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const validation = validateQuoteRequest(request.body);
+    const validation = quoteRequestSchema.safeParse(request.body);
 
-    if (!validation.isValid) {
-      return reply.code(400).send({
-        error: "Validation failed",
-        details: validation.errors,
+    if (!validation.success) {
+      return reply.status(400).send({
+        success: false,
+        message: "Datos inválidos",
+        errors: validation.error.errors,
       });
     }
 
@@ -25,13 +26,14 @@ export const quoteOrderHandler = async (
     const userId = (request as any).user.userId;
 
     const quoteCalculation = await quoteUseCase.execute(
-      validation.validatedData!,
+      validation.data,
       userId
     );
 
-    reply.code(200).send({
-      message: "Quote calculated successfully",
-      quote: {
+    return reply.status(200).send({
+      success: true,
+      message: "Cotización calculada exitosamente",
+      data: {
         originCity: quoteCalculation.originCity,
         destinationCity: quoteCalculation.destinationCity,
         packageDetails: {
@@ -50,21 +52,22 @@ export const quoteOrderHandler = async (
     const errorMessage = (error as Error).message;
 
     if (errorMessage.includes("not supported")) {
-      return reply.code(400).send({
-        error: "Unsupported city",
+      return reply.status(400).send({
+        success: false,
         message: errorMessage,
       });
     }
 
     if (errorMessage.includes("No rate found")) {
-      return reply.code(404).send({
-        error: "No rate found for the selected route and weight",
+      return reply.status(404).send({
+        success: false,
         message: errorMessage,
       });
     }
 
-    reply.code(500).send({
-      error: "Internal server error while calculating quote",
+    return reply.status(500).send({
+      success: false,
+      message: "Error al calcular la cotización",
     });
   }
 };
@@ -81,14 +84,16 @@ export const getQuoteHistoryHandler = async (
 
     const quotes = await getHistoryUseCase.execute(userId);
 
-    reply.code(200).send({
-      message: "Quote history retrieved successfully",
-      quotes: quotes,
+    return reply.status(200).send({
+      success: true,
+      message: "Historial de cotizaciones obtenido exitosamente",
+      data: quotes,
     });
   } catch (error) {
     console.error("Error getting quote history:", error);
-    reply.code(500).send({
-      error: "Internal server error while retrieving quote history",
+    return reply.status(500).send({
+      success: false,
+      message: "Error al obtener el historial de cotizaciones",
     });
   }
 };

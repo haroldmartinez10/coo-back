@@ -1,9 +1,9 @@
 import "dotenv/config";
 import createServer from "@infrastructure/server";
 import checkDatabaseService from "@application/services/CheckDatabaseService";
-import userRoutes from "presentation/routes/userRoutes";
-import quoteRoutes from "presentation/routes/quoteRoutes";
-import orderRoutes from "presentation/routes/orderRoutes";
+import userRoutes from "interface/routes/userRoutes";
+import quoteRoutes from "interface/routes/quoteRoutes";
+import orderRoutes from "interface/routes/orderRoutes";
 
 async function startServer() {
   await checkDatabaseService();
@@ -25,7 +25,7 @@ async function startServer() {
     );
     const socketService = SocketService.getInstance();
     socketService.initialize(app.server);
-    console.log(`🔌 WebSocket listening on port ${PORT}`);
+    console.log(`WebSocket listening on port ${PORT}`);
   } catch (err) {
     console.error("Error starting server:", err);
     process.exit(1);

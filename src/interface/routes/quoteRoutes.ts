@@ -37,8 +37,9 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
           200: {
             type: "object",
             properties: {
+              success: { type: "boolean" },
               message: { type: "string" },
-              quote: {
+              data: {
                 type: "object",
                 properties: {
                   originCity: { type: "string" },
@@ -83,8 +84,9 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
           200: {
             type: "object",
             properties: {
+              success: { type: "boolean" },
               message: { type: "string" },
-              quotes: {
+              data: {
                 type: "array",
                 items: {
                   type: "object",

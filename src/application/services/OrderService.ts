@@ -19,22 +19,6 @@ export class OrderService {
     orderData: CreateOrderDTO,
     userId: number
   ): Promise<OrderDTO> {
-    if (orderData.weight <= 0) {
-      throw new Error("El peso debe ser mayor a 0");
-    }
-
-    if (
-      orderData.height <= 0 ||
-      orderData.width <= 0 ||
-      orderData.length <= 0
-    ) {
-      throw new Error("Las dimensiones deben ser mayores a 0");
-    }
-
-    if (!orderData.originCity || !orderData.destinationCity) {
-      throw new Error("Debe especificar ciudad de origen y destino");
-    }
-
     if (this.quoteRepository) {
       await this.validateBasePrice(orderData);
     }
@@ -107,13 +91,6 @@ export class OrderService {
   }
 
   async updateOrderStatus(updateData: UpdateOrderStatusDto): Promise<void> {
-    const validStatuses = ["pending", "in_transit", "delivered"];
-    if (!validStatuses.includes(updateData.newStatus)) {
-      throw new Error(
-        `Estado inválido. Debe ser uno de: ${validStatuses.join(", ")}`
-      );
-    }
-
     const existingOrder = await this.orderRepository.findOrderById(
       updateData.orderId
     );

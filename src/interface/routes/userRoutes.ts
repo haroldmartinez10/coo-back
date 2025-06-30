@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import {
   loginUserHandler,
   registerUserHandler,
-} from "presentation/controllers/UserController";
+} from "interface/controllers/UserController";
 
 export default async function userRoutes(fastify: FastifyInstance) {
   fastify.post(
