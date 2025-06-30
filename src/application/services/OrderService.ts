@@ -26,7 +26,11 @@ export class OrderService {
 
     const order = await this.orderRepository.createOrder(orderData, userId);
 
-    await redisClient.invalidateUserOrders(userId);
+    try {
+      await redisClient.invalidateUserOrders(userId);
+    } catch (error) {
+      // Redis errors are handled silently
+    }
 
     return order;
   }
@@ -68,15 +72,22 @@ export class OrderService {
   }
 
   async getUserOrders(userId: number): Promise<OrderDTO[]> {
-    const cached = await redisClient.getUserOrdersFromCache(userId);
-    if (cached) {
-      console.log(cached);
-      return cached;
+    try {
+      const cached = await redisClient.getUserOrdersFromCache(userId);
+      if (cached) {
+        return cached;
+      }
+    } catch (error) {
+      // Redis errors are handled silently, continue with database query
     }
 
     const orders = await this.orderRepository.findOrdersByUserId(userId);
 
-    await redisClient.saveUserOrdersToCache(userId, orders);
+    try {
+      await redisClient.saveUserOrdersToCache(userId, orders);
+    } catch (error) {
+      // Redis save errors are handled silently
+    }
 
     return orders;
   }
@@ -115,7 +126,11 @@ export class OrderService {
 
     await this.orderRepository.updateOrderStatus(updateData);
 
-    await redisClient.invalidateUserOrders(existingOrder.userId);
+    try {
+      await redisClient.invalidateUserOrders(existingOrder.userId);
+    } catch (error) {
+      // Redis errors are handled silently
+    }
   }
 
   async getOrderStatusHistory(orderId: number): Promise<OrderStatusDto[]> {
