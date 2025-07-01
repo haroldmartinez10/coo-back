@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { QuoteOrderDTO } from "@application/dtos/quote-order-dto";
-
-const SUPPORTED_CITIES = ["Bogotá", "Medellín", "Cali", "Barranquilla"];
-const MAX_WEIGHT = 1000;
-const MIN_DIMENSION = 1;
-const MAX_DIMENSION = 300;
+import {
+  MAX_DIMENSION,
+  MAX_WEIGHT,
+  MIN_DIMENSION,
+  SUPPORTED_CITIES,
+} from "@shared/constants/volumeWeight";
 
 export const quoteRequestSchema = z
   .object({

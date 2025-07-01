@@ -77,7 +77,7 @@ export class OrderRepositoryImpl implements OrderRepository {
         [trackingCode]
       );
 
-      if ((existing as any[]).length === 0) {
+      if (existing.length === 0) {
         return trackingCode;
       }
 

@@ -9,6 +9,7 @@ import {
   UpdateOrderStatusDto,
 } from "@application/dtos/order-status.dto";
 import { redisClient } from "@infrastructure/cache/redis-client";
+import { VOLUME_WEIGHT_CONSTANT } from "@shared/constants/volumeWeight";
 
 export class OrderService {
   constructor(
@@ -28,9 +29,7 @@ export class OrderService {
 
     try {
       await redisClient.invalidateUserOrders(userId);
-    } catch (error) {
-      // Redis errors are handled silently
-    }
+    } catch (error) {}
 
     return order;
   }
@@ -44,7 +43,8 @@ export class OrderService {
 
     try {
       const volumeWeight =
-        (orderData.height * orderData.width * orderData.length) / 2500;
+        (orderData.height * orderData.width * orderData.length) /
+        VOLUME_WEIGHT_CONSTANT;
       const selectedWeight = Math.max(orderData.weight, volumeWeight);
 
       const expectedBasePrice = await this.quoteRepository.findRate(

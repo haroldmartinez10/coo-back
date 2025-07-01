@@ -1,6 +1,10 @@
 import { QuoteOrderDTO } from "@application/dtos/quote-order-dto";
 import { CreateQuoteHistoryDTO } from "@application/dtos/quote-history.dto";
 import { QuoteRepository } from "@application/interfaces/quote-repository.interface";
+import {
+  SUPPORTED_CITIES,
+  VOLUME_WEIGHT_CONSTANT,
+} from "@shared/constants/volumeWeight";
 
 export interface QuoteCalculation {
   actualWeight: number;
@@ -21,7 +25,7 @@ export class QuoteService {
   constructor(private quoteRepository: QuoteRepository) {}
 
   calculateVolumeWeight(height: number, width: number, length: number): number {
-    return (height * width * length) / 2500;
+    return (height * width * length) / VOLUME_WEIGHT_CONSTANT;
   }
 
   calculateSelectedWeight(actualWeight: number, volumeWeight: number): number {
@@ -29,19 +33,17 @@ export class QuoteService {
   }
 
   validateSupportedCities(originCity: string, destinationCity: string): void {
-    const supportedCities = ["Bogotá", "Medellín", "Cali", "Barranquilla"];
-
-    if (!supportedCities.includes(originCity)) {
+    if (!SUPPORTED_CITIES.includes(originCity)) {
       throw new Error(
-        `La ciudad de origen '${originCity}' no está soportada. Ciudades soportadas: ${supportedCities.join(
+        `La ciudad de origen '${originCity}' no está soportada. Ciudades soportadas: ${SUPPORTED_CITIES.join(
           ", "
         )}`
       );
     }
 
-    if (!supportedCities.includes(destinationCity)) {
+    if (!SUPPORTED_CITIES.includes(destinationCity)) {
       throw new Error(
-        `La ciudad de destino '${destinationCity}' no está soportada. Ciudades soportadas: ${supportedCities.join(
+        `La ciudad de destino '${destinationCity}' no está soportada. Ciudades soportadas: ${SUPPORTED_CITIES.join(
           ", "
         )}`
       );
@@ -56,6 +58,7 @@ export class QuoteService {
       dto.width,
       dto.length
     );
+
     const selectedWeight = this.calculateSelectedWeight(
       dto.weight,
       volumeWeight
@@ -112,9 +115,5 @@ export class QuoteService {
     await this.quoteRepository.saveQuoteHistory(historyData);
 
     return quoteCalculation;
-  }
-
-  getSupportedCities(): string[] {
-    return ["Bogotá", "Medellín", "Cali", "Barranquilla"];
   }
 }
