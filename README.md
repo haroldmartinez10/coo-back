@@ -4,7 +4,7 @@ Sistema backend desarrollado con Node.js, TypeScript y Fastify siguiendo los pri
 
 ## Descripción
 
-Este proyecto implementa una API REST para el sistema COO (Courier Online Ordering) que maneja órdenes de envío, cotizaciones y gestión de usuarios. Está construido siguiendo los principios de Clean Architecture para mantener el código organizado, testeable y escalable.
+Este proyecto implementa una API REST para el sistema COO que maneja órdenes de envío, cotizaciones y gestión de usuarios. Está construido siguiendo los principios de Clean Architecture para mantener el código organizado, testeable y escalable.
 
 ## Arquitectura
 
@@ -145,6 +145,8 @@ El proyecto incluye tests unitarios e integración:
 ## Base de Datos
 
 Las migraciones SQL se encuentran en `src/infrastructure/database/migrations/` y deben ejecutarse en orden:
+
+NOTA: Recordar que las migraciones se hacen automaticamente al ejecutar "npm run dev"
 
 1. `01-rates.sql` - Tabla de tarifas
 2. `02-rates-data.sql` - Datos iniciales de tarifas
