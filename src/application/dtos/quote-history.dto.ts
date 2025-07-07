@@ -10,7 +10,7 @@ export interface QuoteHistoryDTO {
   width: number;
   length: number;
   basePrice: number;
-  pricePerKg: number;
+
   createdAt: Date;
 }
 
@@ -25,5 +25,4 @@ export interface CreateQuoteHistoryDTO {
   width: number;
   length: number;
   basePrice: number;
-  pricePerKg: number;
 }

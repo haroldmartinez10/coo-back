@@ -5,7 +5,6 @@ import {
 
 export interface RateDetails {
   basePrice: number;
-  pricePerKg: number;
 }
 
 export interface QuoteRepository {

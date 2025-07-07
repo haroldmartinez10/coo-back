@@ -11,7 +11,7 @@ export interface QuoteCalculation {
   volumeWeight: number;
   selectedWeight: number;
   basePrice: number;
-  pricePerKg: number;
+
   originCity: string;
   destinationCity: string;
   dimensions: {
@@ -81,7 +81,7 @@ export class QuoteService {
       volumeWeight,
       selectedWeight,
       basePrice: rateData.basePrice,
-      pricePerKg: rateData.pricePerKg,
+
       originCity: dto.originCity,
       destinationCity: dto.destinationCity,
       dimensions: {
@@ -109,7 +109,6 @@ export class QuoteService {
       width: quoteCalculation.dimensions.width,
       length: quoteCalculation.dimensions.length,
       basePrice: quoteCalculation.basePrice,
-      pricePerKg: quoteCalculation.pricePerKg,
     };
 
     await this.quoteRepository.saveQuoteHistory(historyData);

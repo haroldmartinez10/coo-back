@@ -16,7 +16,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
   ): Promise<number | null> {
     try {
       const [rows] = await pool.execute(
-        `SELECT base_price, price_per_kg 
+        `SELECT base_price
          FROM rates 
          WHERE origin_city = ? 
          AND destination_city = ? 
@@ -46,7 +46,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
   ): Promise<RateDetails | null> {
     try {
       const [rows] = await pool.execute(
-        `SELECT base_price, price_per_kg 
+        `SELECT base_price
          FROM rates 
          WHERE origin_city = ? 
          AND destination_city = ? 
@@ -65,7 +65,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       const rate = rates[0];
       return {
         basePrice: rate.base_price,
-        pricePerKg: rate.price_per_kg,
       };
     } catch (error) {
       throw new Error("Error de base de datos al buscar detalles de tarifa");
@@ -79,8 +78,8 @@ export class QuoteRepositoryImpl implements QuoteRepository {
       const [result] = await pool.execute(
         `INSERT INTO quote_history 
          (user_id, origin_city, destination_city, actual_weight, volume_weight, 
-          selected_weight, height, width, length, base_price, price_per_kg)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          selected_weight, height, width, length, base_price)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           quoteData.userId,
           quoteData.originCity,
@@ -92,7 +91,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
           quoteData.width,
           quoteData.length,
           quoteData.basePrice,
-          quoteData.pricePerKg,
         ]
       );
 
@@ -117,7 +115,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         width: savedQuote.width,
         length: savedQuote.length,
         basePrice: savedQuote.base_price,
-        pricePerKg: savedQuote.price_per_kg,
+
         createdAt: savedQuote.created_at,
       };
     } catch (error) {
@@ -149,7 +147,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         width: quote.width,
         length: quote.length,
         basePrice: quote.base_price,
-        pricePerKg: quote.price_per_kg,
+
         createdAt: quote.created_at,
       }));
     } catch (error) {

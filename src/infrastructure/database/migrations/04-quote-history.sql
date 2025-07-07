@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS quote_history (
   width DECIMAL(8,2) NOT NULL,
   length DECIMAL(8,2) NOT NULL,
   base_price INT NOT NULL,
-  price_per_kg INT NOT NULL,
+  
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   INDEX idx_user_id (user_id),
