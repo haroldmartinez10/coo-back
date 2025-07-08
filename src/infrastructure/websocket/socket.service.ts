@@ -38,58 +38,6 @@ export class SocketService {
     if (!this.io) return;
 
     this.io.on("connection", (socket: Socket) => {
-      if (this.isDevelopment) {
-        socket.on("test-join-room", (userId: string) => {
-          const roomName = `room-state-${userId}`;
-          socket.join(roomName);
-
-          socket.emit("test-room-joined", {
-            success: true,
-            room: roomName,
-            message: "Modo desarrollo - Sin autenticación",
-            userId: userId,
-          });
-        });
-
-        socket.on(
-          "test-simulate-order-update",
-          (data: { userId: string; orderId: string }) => {
-            const roomName = `room-state-${data.userId}`;
-
-            const mockOrderData = {
-              id: parseInt(data.orderId),
-              userId: parseInt(data.userId),
-              trackingCode: `COO-TEST-${Date.now()}`,
-              status: "in_transit",
-              originCity: "Bogotá",
-              destinationCity: "Medellín",
-              basePrice: 50000,
-              weight: 2.5,
-              height: 10,
-              width: 15,
-              length: 20,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
-
-            this.io?.to(roomName).emit("order-updated", {
-              type: "ORDER_STATUS_UPDATED",
-              data: {
-                ...mockOrderData,
-                timestamp: new Date().toISOString(),
-              },
-            });
-
-            socket.emit("test-order-sent", {
-              success: true,
-              message: "Orden simulada enviada",
-              roomName,
-              orderData: mockOrderData,
-            });
-          }
-        );
-      }
-
       socket.on("authenticate", (token: string) => {
         try {
           const decoded = this.jwtService.verifyToken(token);

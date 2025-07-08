@@ -22,16 +22,5 @@ export const updateOrderStatusSchema = z.object({
   notes: z.string().optional(),
 });
 
-export const orderIdParamSchema = z.object({
-  id: z.string().transform((val) => {
-    const num = parseInt(val, 10);
-    if (isNaN(num) || num <= 0) {
-      throw new Error("ID de orden inválido");
-    }
-    return num;
-  }),
-});
-
 export type CreateOrderRequest = z.infer<typeof createOrderSchema>;
 export type UpdateOrderStatusRequest = z.infer<typeof updateOrderStatusSchema>;
-export type OrderIdParam = z.infer<typeof orderIdParamSchema>;

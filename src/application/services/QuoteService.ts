@@ -50,6 +50,12 @@ export class QuoteService {
     }
   }
 
+  async calculateAndSaveQuote(dto: QuoteOrderDTO): Promise<QuoteCalculation> {
+    const quoteCalculation = await this.calculateQuote(dto);
+
+    return quoteCalculation;
+  }
+
   async calculateQuote(dto: QuoteOrderDTO): Promise<QuoteCalculation> {
     this.validateSupportedCities(dto.originCity, dto.destinationCity);
 
@@ -90,29 +96,5 @@ export class QuoteService {
         length: dto.length,
       },
     };
-  }
-
-  async calculateAndSaveQuote(
-    dto: QuoteOrderDTO,
-    userId: number
-  ): Promise<QuoteCalculation> {
-    const quoteCalculation = await this.calculateQuote(dto);
-
-    const historyData: CreateQuoteHistoryDTO = {
-      userId,
-      originCity: quoteCalculation.originCity,
-      destinationCity: quoteCalculation.destinationCity,
-      actualWeight: quoteCalculation.actualWeight,
-      volumeWeight: quoteCalculation.volumeWeight,
-      selectedWeight: quoteCalculation.selectedWeight,
-      height: quoteCalculation.dimensions.height,
-      width: quoteCalculation.dimensions.width,
-      length: quoteCalculation.dimensions.length,
-      basePrice: quoteCalculation.basePrice,
-    };
-
-    await this.quoteRepository.saveQuoteHistory(historyData);
-
-    return quoteCalculation;
   }
 }

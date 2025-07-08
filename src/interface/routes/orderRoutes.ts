@@ -130,7 +130,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         params: {
           type: "object",
           properties: {
-            id: { type: "string" },
+            id: { type: "number", minimum: 1 },
           },
         },
         response: {
@@ -247,7 +247,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         params: {
           type: "object",
           properties: {
-            id: { type: "string" },
+            id: { type: "number", minimum: 1 },
           },
         },
         body: {
@@ -288,7 +288,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
         params: {
           type: "object",
           properties: {
-            id: { type: "string" },
+            id: { type: "number", minimum: 1 },
           },
         },
         response: {

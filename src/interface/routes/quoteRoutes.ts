@@ -1,8 +1,5 @@
 import { FastifyInstance } from "fastify";
-import {
-  quoteOrderHandler,
-  getQuoteHistoryHandler,
-} from "../controllers/QuoteController";
+import { quoteOrderHandler } from "../controllers/QuoteController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 export default async function quoteRoutes(fastify: FastifyInstance) {
@@ -70,41 +67,5 @@ export default async function quoteRoutes(fastify: FastifyInstance) {
       },
     },
     quoteOrderHandler
-  );
-
-  fastify.get(
-    "/quotes",
-    {
-      preHandler: authMiddleware,
-      schema: {
-        tags: ["Quotes"],
-        summary: "Obtener historial de cotizaciones",
-        description: "Obtiene todas las cotizaciones del usuario",
-        response: {
-          200: {
-            type: "object",
-            properties: {
-              success: { type: "boolean" },
-              message: { type: "string" },
-              data: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    id: { type: "integer" },
-                    originCity: { type: "string" },
-                    destinationCity: { type: "string" },
-                    weight: { type: "number" },
-                    basePrice: { type: "number" },
-                    createdAt: { type: "string", format: "date-time" },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    getQuoteHistoryHandler
   );
 }

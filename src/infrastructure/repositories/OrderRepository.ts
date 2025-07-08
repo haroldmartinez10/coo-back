@@ -8,6 +8,7 @@ import {
 } from "@application/dtos/order-status.dto";
 import pool from "@infrastructure/database/connection";
 import { generateTrackingCode } from "@shared/utils/tracking-code.util";
+import { SocketService } from "@infrastructure/websocket/socket.service";
 
 export class OrderRepositoryImpl implements OrderRepository {
   async createOrder(
@@ -219,7 +220,6 @@ export class OrderRepositoryImpl implements OrderRepository {
 
       const updatedOrder = await this.findOrderById(updateData.orderId);
       if (updatedOrder) {
-        const { SocketService } = await import("../websocket/socket.service");
         const socketService = SocketService.getInstance();
         socketService.emitOrderUpdate(updatedOrder.userId, updatedOrder);
       }

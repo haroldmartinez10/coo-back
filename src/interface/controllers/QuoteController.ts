@@ -2,9 +2,6 @@ import { QuoteOrderUseCase } from "@application/use-cases/quote-order.use-case";
 import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { quoteRequestSchema } from "../validators/quoteValidator";
-import { LoginUserUseCase } from "@application/use-cases/login-user.usecase";
-import { UserRepository } from "@infrastructure/repositories/UserRepository";
-import { JwtService } from "@application/services/JwtService";
 
 export const quoteOrderHandler = async (
   request: FastifyRequest,
@@ -68,30 +65,6 @@ export const quoteOrderHandler = async (
     return reply.status(500).send({
       success: false,
       message: "Error al calcular la cotización",
-    });
-  }
-};
-
-export const getQuoteHistoryHandler = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
-  try {
-    const quoteRepository = new QuoteRepositoryImpl();
-
-    const userId = (request as any).user.userId;
-
-    const quotes = await quoteRepository.getQuoteHistory(userId);
-
-    return reply.status(200).send({
-      success: true,
-      message: "Historial de cotizaciones obtenido exitosamente",
-      data: quotes,
-    });
-  } catch (error) {
-    return reply.status(500).send({
-      success: false,
-      message: "Error al obtener el historial de cotizaciones",
     });
   }
 };

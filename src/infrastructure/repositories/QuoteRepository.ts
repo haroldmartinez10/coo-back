@@ -71,60 +71,6 @@ export class QuoteRepositoryImpl implements QuoteRepository {
     }
   }
 
-  async saveQuoteHistory(
-    quoteData: CreateQuoteHistoryDTO
-  ): Promise<QuoteHistoryDTO> {
-    try {
-      const [result] = await pool.execute(
-        `INSERT INTO quote_history 
-         (user_id, origin_city, destination_city, actual_weight, volume_weight, 
-          selected_weight, height, width, length, base_price)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          quoteData.userId,
-          quoteData.originCity,
-          quoteData.destinationCity,
-          quoteData.actualWeight,
-          quoteData.volumeWeight,
-          quoteData.selectedWeight,
-          quoteData.height,
-          quoteData.width,
-          quoteData.length,
-          quoteData.basePrice,
-        ]
-      );
-
-      const insertResult = result as any;
-      const insertId = insertResult.insertId;
-
-      const [rows] = await pool.execute(
-        `SELECT * FROM quote_history WHERE id = ?`,
-        [insertId]
-      );
-
-      const savedQuote = (rows as any[])[0];
-      return {
-        id: savedQuote.id,
-        userId: savedQuote.user_id,
-        originCity: savedQuote.origin_city,
-        destinationCity: savedQuote.destination_city,
-        actualWeight: savedQuote.actual_weight,
-        volumeWeight: savedQuote.volume_weight,
-        selectedWeight: savedQuote.selected_weight,
-        height: savedQuote.height,
-        width: savedQuote.width,
-        length: savedQuote.length,
-        basePrice: savedQuote.base_price,
-
-        createdAt: savedQuote.created_at,
-      };
-    } catch (error) {
-      throw new Error(
-        "Error de base de datos al guardar historial de cotización"
-      );
-    }
-  }
-
   async getQuoteHistory(userId: number): Promise<QuoteHistoryDTO[]> {
     try {
       const [rows] = await pool.execute(

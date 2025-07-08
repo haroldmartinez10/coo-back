@@ -9,7 +9,6 @@ import { OrderService } from "@application/services/OrderService";
 import {
   createOrderSchema,
   updateOrderStatusSchema,
-  orderIdParamSchema,
 } from "../validators/orderValidator";
 
 export const createOrderHandler = async (
@@ -87,16 +86,8 @@ export const getOrderTrackingHandler = async (
   reply: FastifyReply
 ) => {
   try {
-    const paramValidation = orderIdParamSchema.safeParse(request.params);
-    if (!paramValidation.success) {
-      return reply.status(400).send({
-        success: false,
-        message: "ID de orden inválido",
-        errors: paramValidation.error.errors,
-      });
-    }
-
-    const { id: orderId } = paramValidation.data;
+    const { id } = request.params as { id: string };
+    const orderId = Number(id);
     const userId = (request as any).user.userId;
     const userRole = (request as any).user.role;
 
@@ -139,14 +130,8 @@ export const updateOrderStatusHandler = async (
   reply: FastifyReply
 ) => {
   try {
-    const paramValidation = orderIdParamSchema.safeParse(request.params);
-    if (!paramValidation.success) {
-      return reply.status(400).send({
-        success: false,
-        message: "ID de orden inválido",
-        errors: paramValidation.error.errors,
-      });
-    }
+    const { id } = request.params as { id: string };
+    const orderId = Number(id);
 
     const bodyValidation = updateOrderStatusSchema.safeParse(request.body);
     if (!bodyValidation.success) {
@@ -156,8 +141,6 @@ export const updateOrderStatusHandler = async (
         errors: bodyValidation.error.errors,
       });
     }
-
-    const { id: orderId } = paramValidation.data;
     const { newStatus, notes } = bodyValidation.data;
 
     const orderRepository = new OrderRepositoryImpl();
@@ -197,16 +180,8 @@ export const getOrderStatusHistoryHandler = async (
   reply: FastifyReply
 ) => {
   try {
-    const paramValidation = orderIdParamSchema.safeParse(request.params);
-    if (!paramValidation.success) {
-      return reply.status(400).send({
-        success: false,
-        message: "ID de orden inválido",
-        errors: paramValidation.error.errors,
-      });
-    }
-
-    const { id: orderId } = paramValidation.data;
+    const { id } = request.params as { id: string };
+    const orderId = Number(id);
     const userId = (request as any).user.userId;
     const userRole = (request as any).user.role;
 
