@@ -1,4 +1,3 @@
-// Mock Redis globally
 jest.mock("@infrastructure/cache/redis-client", () => ({
   redisClient: {
     getUserOrdersFromCache: jest.fn(),

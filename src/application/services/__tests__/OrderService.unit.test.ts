@@ -3,7 +3,6 @@ import { OrderRepository } from "@application/interfaces/order-repository.interf
 import { redisClient } from "@infrastructure/cache/redis-client";
 import { mockUserId, mockOrders, mockOrder } from "../../../__tests__/setup";
 
-// Mock the repository
 const mockOrderRepository: jest.Mocked<OrderRepository> = {
   createOrder: jest.fn(),
   findOrdersByUserId: jest.fn(),

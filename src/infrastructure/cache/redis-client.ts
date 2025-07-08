@@ -87,7 +87,7 @@ class RedisClient {
       const key = `user_orders:${userId}`;
       const value = JSON.stringify(orders);
 
-      await this.client.setEx(key, 300, value); // Aumentado a 5 minutos
+      await this.client.setEx(key, 300, value);
     } catch (error) {
       error;
     }

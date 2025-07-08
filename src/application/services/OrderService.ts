@@ -80,7 +80,7 @@ export class OrderService {
         return cached;
       }
     } catch (error) {
-      // Redis errors are handled silently, continue with database query
+      error;
     }
 
     const orders = await this.orderRepository.findOrdersByUserId(userId);
@@ -88,7 +88,7 @@ export class OrderService {
     try {
       await redisClient.saveUserOrdersToCache(userId, orders);
     } catch (error) {
-      // Redis save errors are handled silently
+      error;
     }
 
     return orders;
@@ -131,7 +131,7 @@ export class OrderService {
     try {
       await redisClient.invalidateUserOrders(existingOrder.userId);
     } catch (error) {
-      // Redis errors are handled silently
+      error;
     }
   }
 
