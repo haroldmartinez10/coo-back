@@ -19,7 +19,7 @@ const mockOrderService: jest.Mocked<OrderService> = {
   getOrderStatusHistory: jest.fn(),
   getOrderStatusHistoryWithDetails: jest.fn(),
   validateBasePrice: jest.fn(),
-} as any;
+} as unknown as jest.Mocked<OrderService>;
 
 describe("GetUserOrdersUseCase", () => {
   let useCase: GetUserOrdersUseCase;

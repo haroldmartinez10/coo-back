@@ -7,6 +7,7 @@ import {
   CreateQuoteHistoryDTO,
 } from "@application/dtos/quote-history.dto";
 import pool from "@infrastructure/database/connection";
+import { RateRow, QuoteHistoryRow } from "@infrastructure/database/types";
 
 export class QuoteRepositoryImpl implements QuoteRepository {
   async findRate(
@@ -27,7 +28,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         [origin, destination, weight, weight]
       );
 
-      const rates = rows as any[];
+      const rates = rows as RateRow[];
       if (rates.length === 0) {
         return null;
       }
@@ -57,7 +58,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         [origin, destination, weight, weight]
       );
 
-      const rates = rows as any[];
+      const rates = rows as RateRow[];
       if (rates.length === 0) {
         return null;
       }
@@ -80,7 +81,7 @@ export class QuoteRepositoryImpl implements QuoteRepository {
         [userId]
       );
 
-      const quotes = rows as any[];
+      const quotes = rows as QuoteHistoryRow[];
       return quotes.map((quote) => ({
         id: quote.id,
         userId: quote.user_id,

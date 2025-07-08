@@ -74,6 +74,8 @@ export class OrderService {
   async getUserOrders(userId: number): Promise<OrderDTO[]> {
     try {
       const cached = await redisClient.getUserOrdersFromCache(userId);
+
+      console.log(cached);
       if (cached) {
         return cached;
       }

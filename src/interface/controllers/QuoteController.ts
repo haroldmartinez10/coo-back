@@ -2,6 +2,7 @@ import { QuoteOrderUseCase } from "@application/use-cases/quote-order.use-case";
 import { QuoteRepositoryImpl } from "@infrastructure/repositories/QuoteRepository";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { quoteRequestSchema } from "../validators/quoteValidator";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 export const quoteOrderHandler = async (
   request: FastifyRequest,
@@ -22,7 +23,7 @@ export const quoteOrderHandler = async (
 
     const quoteUseCase = new QuoteOrderUseCase(quoteRepository);
 
-    const userId = (request as any).user.userId;
+    const userId = (request as AuthenticatedRequest).user.userId;
 
     const quoteCalculation = await quoteUseCase.quoteOrder(
       validation.data,

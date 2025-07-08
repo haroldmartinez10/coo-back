@@ -1,13 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { JwtService } from "@application/services/JwtService";
+import { AuthenticatedUser } from "@application/dtos/user.dto";
 
-interface AuthenticatedRequest extends FastifyRequest {
-  user: {
-    userId: number;
-    email: string;
-    name: string;
-    role: "admin" | "user";
-  };
+export interface AuthenticatedRequest extends FastifyRequest {
+  user: AuthenticatedUser;
 }
 
 export const authMiddleware = async (

@@ -1,10 +1,10 @@
-import { createClient } from "redis";
+import { createClient, RedisClientType } from "redis";
 import { env } from "../config/env";
 import { OrderDTO } from "@application/dtos/order.dto";
 
 class RedisClient {
   private static instance: RedisClient;
-  private client: any;
+  private client: RedisClientType | null = null;
   private isConnected = false;
   private connectionAttempted = false;
 
@@ -27,7 +27,7 @@ class RedisClient {
         this.isConnected = true;
       });
 
-      this.client.on("error", (error: any) => {
+      this.client.on("error", (error: Error) => {
         this.isConnected = false;
       });
 

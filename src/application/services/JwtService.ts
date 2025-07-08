@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { env } from "@infrastructure/config/env";
+import { UserPayload } from "@application/dtos/user.dto";
 
 export class JwtService {
   private readonly secretKey: string;
@@ -10,20 +11,15 @@ export class JwtService {
     this.expiresIn = env.JWT_EXPIRES_IN;
   }
 
-  generateToken(payload: {
-    userId: number;
-    email: string;
-    name: string;
-    role: "admin" | "user";
-  }): string {
+  generateToken(payload: UserPayload): string {
     return jwt.sign(payload, this.secretKey, {
       expiresIn: this.expiresIn,
     } as jwt.SignOptions);
   }
 
-  verifyToken(token: string): any {
+  verifyToken(token: string): UserPayload {
     try {
-      return jwt.verify(token, this.secretKey);
+      return jwt.verify(token, this.secretKey) as UserPayload;
     } catch (error) {
       throw new Error("Token inválido");
     }

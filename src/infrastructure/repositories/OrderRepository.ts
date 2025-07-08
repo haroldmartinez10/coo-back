@@ -9,6 +9,12 @@ import {
 import pool from "@infrastructure/database/connection";
 import { generateTrackingCode } from "@shared/utils/tracking-code.util";
 import { SocketService } from "@infrastructure/websocket/socket.service";
+import {
+  DatabaseConnection,
+  DatabaseResult,
+  DatabaseRow,
+  OrderRow,
+} from "@infrastructure/database/types";
 
 export class OrderRepositoryImpl implements OrderRepository {
   async createOrder(
@@ -41,7 +47,7 @@ export class OrderRepositoryImpl implements OrderRepository {
       ];
 
       const [result] = await connection.execute(query, values);
-      const insertId = (result as any).insertId;
+      const insertId = (result as DatabaseResult).insertId;
 
       await this.addStatusToHistoryWithConnection(
         connection,
@@ -66,7 +72,9 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
-  private async generateUniqueTrackingCode(connection: any): Promise<string> {
+  private async generateUniqueTrackingCode(
+    connection: DatabaseConnection
+  ): Promise<string> {
     let attempts = 0;
     const maxAttempts = 10;
 
@@ -78,7 +86,7 @@ export class OrderRepositoryImpl implements OrderRepository {
         [trackingCode]
       );
 
-      if (existing.length === 0) {
+      if ((existing as OrderRow[]).length === 0) {
         return trackingCode;
       }
 
@@ -99,7 +107,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     `;
 
     const [rows] = await pool.execute(query, [userId]);
-    return this.mapRowsToOrders(rows as any[]);
+    return this.mapRowsToOrders(rows as OrderRow[]);
   }
 
   async findAllOrders(): Promise<OrderDTO[]> {
@@ -111,7 +119,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     `;
 
     const [rows] = await pool.execute(query);
-    return this.mapRowsToOrders(rows as any[]);
+    return this.mapRowsToOrders(rows as OrderRow[]);
   }
 
   async findOrderById(id: number): Promise<OrderDTO | null> {
@@ -123,7 +131,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     `;
 
     const [rows] = await pool.execute(query, [id]);
-    const orders = this.mapRowsToOrders(rows as any[]);
+    const orders = this.mapRowsToOrders(rows as OrderRow[]);
     return orders.length > 0 ? orders[0] : null;
   }
 
@@ -138,7 +146,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     `;
 
     const [rows] = await pool.execute(query, [trackingCode]);
-    const orders = this.mapRowsToOrders(rows as any[]);
+    const orders = this.mapRowsToOrders(rows as OrderRow[]);
     return orders.length > 0 ? orders[0] : null;
   }
 
@@ -152,7 +160,7 @@ export class OrderRepositoryImpl implements OrderRepository {
       WHERE id = ?
     `;
     const [orderRows] = await pool.execute(orderQuery, [id]);
-    const orders = this.mapRowsToOrders(orderRows as any[]);
+    const orders = this.mapRowsToOrders(orderRows as OrderRow[]);
 
     if (orders.length === 0) {
       return null;
@@ -177,7 +185,7 @@ export class OrderRepositoryImpl implements OrderRepository {
       WHERE tracking_code = ?
     `;
     const [orderRows] = await pool.execute(orderQuery, [trackingCode]);
-    const orders = this.mapRowsToOrders(orderRows as any[]);
+    const orders = this.mapRowsToOrders(orderRows as OrderRow[]);
 
     if (orders.length === 0) {
       return null;
@@ -240,7 +248,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     `;
 
     const [rows] = await pool.execute(query, [orderId]);
-    return (rows as any[]).map((row) => ({
+    return (rows as DatabaseRow[]).map((row) => ({
       id: row.id,
       status: row.status,
       changed_at: row.changed_at,
@@ -262,7 +270,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   }
 
   private async addStatusToHistoryWithConnection(
-    connection: any,
+    connection: DatabaseConnection,
     orderId: number,
     status: string,
     notes?: string
@@ -275,17 +283,17 @@ export class OrderRepositoryImpl implements OrderRepository {
     await connection.execute(query, [orderId, status, notes]);
   }
 
-  private mapRowsToOrders(rows: any[]): OrderDTO[] {
+  private mapRowsToOrders(rows: OrderRow[]): OrderDTO[] {
     return rows.map((row) => ({
       id: row.id,
       userId: row.user_id,
       originCity: row.origin_city,
       destinationCity: row.destination_city,
-      weight: parseFloat(row.weight),
-      height: parseFloat(row.height),
-      width: parseFloat(row.width),
-      length: parseFloat(row.length),
-      basePrice: parseInt(row.base_price),
+      weight: row.weight,
+      height: row.height,
+      width: row.width,
+      length: row.length,
+      basePrice: row.base_price,
       trackingCode: row.tracking_code,
       status: row.status,
       createdAt: row.created_at,

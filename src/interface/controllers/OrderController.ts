@@ -10,6 +10,7 @@ import {
   createOrderSchema,
   updateOrderStatusSchema,
 } from "../validators/orderValidator";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 export const createOrderHandler = async (
   request: FastifyRequest,
@@ -26,7 +27,7 @@ export const createOrderHandler = async (
     }
 
     const orderData = validation.data;
-    const userId = (request as any).user.userId;
+    const userId = (request as AuthenticatedRequest).user.userId;
 
     const orderRepository = new OrderRepositoryImpl();
     const quoteRepository = new QuoteRepositoryImpl();
@@ -53,8 +54,8 @@ export const getUserOrdersHandler = async (
   reply: FastifyReply
 ) => {
   try {
-    const userId = (request as any).user.userId;
-    const userRole = (request as any).user.role;
+    const userId = (request as AuthenticatedRequest).user.userId;
+    const userRole = (request as AuthenticatedRequest).user.role;
     const isAdmin = userRole === "admin";
 
     const orderRepository = new OrderRepositoryImpl();
@@ -88,8 +89,8 @@ export const getOrderTrackingHandler = async (
   try {
     const { id } = request.params as { id: string };
     const orderId = Number(id);
-    const userId = (request as any).user.userId;
-    const userRole = (request as any).user.role;
+    const userId = (request as AuthenticatedRequest).user.userId;
+    const userRole = (request as AuthenticatedRequest).user.role;
 
     const orderRepository = new OrderRepositoryImpl();
     const orderService = new OrderService(orderRepository);
@@ -182,8 +183,8 @@ export const getOrderStatusHistoryHandler = async (
   try {
     const { id } = request.params as { id: string };
     const orderId = Number(id);
-    const userId = (request as any).user.userId;
-    const userRole = (request as any).user.role;
+    const userId = (request as AuthenticatedRequest).user.userId;
+    const userRole = (request as AuthenticatedRequest).user.role;
 
     const orderRepository = new OrderRepositoryImpl();
 

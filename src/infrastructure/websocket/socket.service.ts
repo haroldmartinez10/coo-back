@@ -1,6 +1,10 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { Server } from "http";
 import { JwtService } from "@application/services/JwtService";
+import {
+  AuthenticatedSocket,
+  OrderUpdateDataInput,
+} from "@infrastructure/types";
 
 export class SocketService {
   private static instance: SocketService;
@@ -42,7 +46,7 @@ export class SocketService {
         try {
           const decoded = this.jwtService.verifyToken(token);
 
-          (socket as any).user = decoded;
+          (socket as AuthenticatedSocket).user = decoded;
 
           const roomName = `room-state-${decoded.userId}`;
           socket.join(roomName);
@@ -68,7 +72,7 @@ export class SocketService {
       });
 
       socket.on("join-user-room", () => {
-        const user = (socket as any).user;
+        const user = (socket as AuthenticatedSocket).user;
         if (!user) {
           socket.emit("error", { message: "Debe autenticarse primero" });
           return;
@@ -85,7 +89,7 @@ export class SocketService {
       });
 
       socket.on("leave-user-room", () => {
-        const user = (socket as any).user;
+        const user = (socket as AuthenticatedSocket).user;
         if (!user) {
           return;
         }
@@ -95,7 +99,7 @@ export class SocketService {
       });
 
       socket.on("disconnect", () => {
-        const user = (socket as any).user;
+        const user = (socket as AuthenticatedSocket).user;
         const userInfo = user
           ? `${user.userId} (${user.email})`
           : "no autenticado";
@@ -103,7 +107,10 @@ export class SocketService {
     });
   }
 
-  public emitOrderUpdate(userId: number, orderData: any): void {
+  public emitOrderUpdate(
+    userId: number,
+    orderData: OrderUpdateDataInput
+  ): void {
     if (!this.io) {
       return;
     }

@@ -1,6 +1,7 @@
 import { IUserRepository } from "@application/interfaces/user-repository.interface";
 import { User } from "@domain/entities/User";
 import pool from "@infrastructure/database/connection";
+import { UserRow, DatabaseResult } from "@infrastructure/database/types";
 
 export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null> {
@@ -10,7 +11,7 @@ export class UserRepository implements IUserRepository {
         [email]
       );
 
-      const users = rows as any[];
+      const users = rows as UserRow[];
       if (users.length === 0) {
         return null;
       }
@@ -36,7 +37,7 @@ export class UserRepository implements IUserRepository {
         [user.email, user.password, user.name, user.role]
       );
 
-      const insertResult = result as { insertId: number };
+      const insertResult = result as DatabaseResult;
       const savedUser = new User(
         insertResult.insertId,
         user.email,
